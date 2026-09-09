@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { BrandMark } from "./BrandMark";
 import { equivalentSlugs, type Locale, navigation } from "@/lib/site-content";
 
@@ -33,6 +40,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
   const compactRef = useRef(false);
+  const dragStartRef = useRef<{ y: number; time: number } | null>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -55,6 +63,23 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
   const alternateHref = useMemo(() => {
     const parts = pathname.split("/").filter(Boolean);
     const nextLocale = locale === "pt" ? "en" : "pt";
@@ -62,10 +87,76 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     return slug ? `/${nextLocale}/${equivalentSlugs[slug] ?? slug}` : `/${nextLocale}`;
   }, [locale, pathname]);
 
+  const closeMenu = () => setOpen(false);
+
+  const handleBrandClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    closeMenu();
+    if (pathname === `/${locale}`) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleMenuPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
+    if (!open || event.pointerType === "mouse") return;
+    dragStartRef.current = { y: event.clientY, time: performance.now() };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleMenuPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    const start = dragStartRef.current;
+    if (!start) return;
+
+    const offset = Math.min(0, event.clientY - start.y);
+    if (offset > -4) return;
+
+    event.preventDefault();
+    event.currentTarget.classList.add("is-dragging");
+    event.currentTarget.style.setProperty("--menu-drag-y", `${offset}px`);
+  };
+
+  const finishMenuDrag = (event: ReactPointerEvent<HTMLElement>, cancelled = false) => {
+    const start = dragStartRef.current;
+    if (!start) return;
+
+    const offset = Math.min(0, event.clientY - start.y);
+    const elapsed = Math.max(performance.now() - start.time, 1);
+    const upwardVelocity = -offset / elapsed;
+    const shouldClose = !cancelled && (offset < -72 || (offset < -28 && upwardVelocity > 0.45));
+    const navigation = event.currentTarget;
+
+    dragStartRef.current = null;
+    if (navigation.hasPointerCapture(event.pointerId)) {
+      navigation.releasePointerCapture(event.pointerId);
+    }
+    navigation.classList.remove("is-dragging");
+
+    if (shouldClose) {
+      closeMenu();
+      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 360);
+      return;
+    }
+
+    navigation.style.setProperty("--menu-drag-y", "0px");
+    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 360);
+  };
+
+  const handleMenuPointerEnd = (event: ReactPointerEvent<HTMLElement>) => finishMenuDrag(event);
+  const handleMenuPointerCancel = (event: ReactPointerEvent<HTMLElement>) => finishMenuDrag(event, true);
+
   return (
     <>
     <div className="site-header-spacer" aria-hidden="true" />
-    <header className={`site-header ${compact ? "site-header--compact" : ""}`}>
+    <button
+      type="button"
+      className="mobile-menu-backdrop"
+      data-open={open ? "" : undefined}
+      aria-label={locale === "pt" ? "Fechar menu" : "Close menu"}
+      aria-hidden={!open}
+      tabIndex={open ? 0 : -1}
+      onClick={closeMenu}
+    />
+    <header className={`site-header ${compact ? "site-header--compact" : ""} ${open ? "site-header--menu-open" : ""}`}>
       <div className="site-header__stripe" />
       <div className="site-header__utility page-shell">
         <span>{locale === "pt" ? "Salvador · Brasil" : "Salvador · Brazil"}</span>
@@ -76,7 +167,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         </Link>
       </div>
       <div className="site-header__main page-shell">
-        <Link href={`/${locale}`} className="site-header__brand-link">
+        <Link href={`/${locale}`} className="site-header__brand-link" onClick={handleBrandClick} aria-label={locale === "pt" ? "Varanda Roots — início" : "Varanda Roots — home"}>
           <BrandMark compact={compact} />
         </Link>
         <button
@@ -89,7 +180,15 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <span className="menu-toggle__icon" aria-hidden="true"><i /><i /></span>
           <span>{open ? (locale === "pt" ? "Fechar" : "Close") : "Menu"}</span>
         </button>
-        <nav id="main-navigation" className={`main-navigation ${open ? "is-open" : ""}`} aria-label="Principal">
+        <nav
+          id="main-navigation"
+          className={`main-navigation ${open ? "is-open" : ""}`}
+          aria-label="Principal"
+          onPointerDown={handleMenuPointerDown}
+          onPointerMove={handleMenuPointerMove}
+          onPointerUp={handleMenuPointerEnd}
+          onPointerCancel={handleMenuPointerCancel}
+        >
           {navigation[locale].map((item) => {
             const href = `/${locale}${item.href}`;
             const active = pathname === href;
