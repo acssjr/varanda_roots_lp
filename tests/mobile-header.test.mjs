@@ -16,7 +16,7 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   assert.match(header, /onPointerMove=\{handleMenuPointerMove\}/);
   assert.match(header, /onPointerUp=\{handleMenuPointerEnd\}/);
   assert.match(styles, /\.mobile-menu-backdrop\s*\{/);
-  assert.match(styles, /\.main-navigation\s*\{[^}]*overflow-y:\s*hidden/s);
+  assert.match(styles, /\.main-navigation\s*\{[^}]*overflow:\s*hidden/s);
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
 });
 

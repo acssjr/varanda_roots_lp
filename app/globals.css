@@ -259,7 +259,7 @@ img { object-fit: cover; }
   .site-header--menu-open { color: var(--yellow); background: var(--blue); box-shadow: none; }
   .site-header--menu-open .brand { color: var(--yellow); }
   .site-header--menu-open .menu-toggle { color: var(--yellow); }
-  .main-navigation { position: fixed; z-index: -1; top: 0; right: 0; left: 0; display: grid; align-content: start; gap: clamp(5px, 1.2vh, 12px); max-height: calc(100svh - 18px); padding: 112px 24px 28px; overflow-y: hidden; overscroll-behavior: none; touch-action: none; color: var(--yellow); background: var(--blue); box-shadow: 0 22px 48px rgba(4, 10, 42, .24); opacity: 0; visibility: hidden; transform: translate3d(0, -100%, 0); transition: opacity .35s ease, visibility .35s ease, transform .35s cubic-bezier(.22,1,.36,1); will-change: transform; }
+  .main-navigation { position: fixed; z-index: -1; top: 0; right: 0; left: 0; display: grid; align-content: start; gap: clamp(5px, 1.2vh, 12px); max-height: calc(100svh - 18px); padding: 112px 24px 28px; overflow: hidden; overscroll-behavior: none; touch-action: none; color: var(--yellow); background: var(--blue); box-shadow: 0 22px 48px rgba(4, 10, 42, .24); opacity: 0; visibility: hidden; transform: translate3d(0, -100%, 0); transition: opacity .35s ease, visibility .35s ease, transform .35s cubic-bezier(.22,1,.36,1); will-change: transform; }
   .main-navigation.is-open { opacity: 1; visibility: visible; transform: translate3d(0, var(--menu-drag-y, 0px), 0); }
   .main-navigation.is-dragging { transition: none; }
   .main-navigation a { width: var(--shell); margin-inline: auto; padding-block: 3px; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 500; line-height: 1; letter-spacing: -.05em; }
