@@ -120,7 +120,15 @@ export const homeContent = {
     duoLink: "Conheça Pía e PC",
     visitKicker: "No Rio Vermelho",
     visitTitle: "Trace sua rota até a Varanda.",
-    visitBody: "Rua Deputado Cunha Bueno, 55 · Salvador, Bahia.",
+    visitNeighborhood: "Rio Vermelho · Salvador",
+    visitBody: "Rua Deputado Cunha Bueno, 55 · Rio Vermelho · Salvador, Bahia.",
+    visitNearby: [
+      { icon: "beach", time: "9 min a pé", place: "Praia do Buracão" },
+      { icon: "community", time: "13 min a pé", place: "Vila Caramuru" },
+      { icon: "landmark", time: "18 min a pé", place: "Largo de Santana" },
+    ],
+    visitMapsLabel: "Google Maps",
+    visitWazeLabel: "Waze",
     contact: "Fale com a Varanda",
   },
   en: {
@@ -200,7 +208,15 @@ export const homeContent = {
     duoLink: "Meet Pía and PC",
     visitKicker: "In Rio Vermelho",
     visitTitle: "Plan your route to Varanda.",
-    visitBody: "Rua Deputado Cunha Bueno, 55 · Salvador, Bahia, Brazil.",
+    visitNeighborhood: "Rio Vermelho · Salvador",
+    visitBody: "Rua Deputado Cunha Bueno, 55 · Rio Vermelho · Salvador, Bahia, Brazil.",
+    visitNearby: [
+      { icon: "beach", time: "9 min walk", place: "Praia do Buracão" },
+      { icon: "community", time: "13 min walk", place: "Vila Caramuru" },
+      { icon: "landmark", time: "18 min walk", place: "Largo de Santana" },
+    ],
+    visitMapsLabel: "Google Maps",
+    visitWazeLabel: "Waze",
     contact: "Contact Varanda",
   },
 } satisfies Record<Locale, Record<string, unknown>>;

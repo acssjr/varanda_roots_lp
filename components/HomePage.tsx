@@ -10,6 +10,34 @@ import { homeContent, type Locale } from "@/lib/site-content";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+const GOOGLE_MAPS_ROUTE = "https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA";
+const WAZE_ROUTE = "https://ul.waze.com/ul?place=ChIJ52z4fWsDFgcRf1jeybK-zmM&ll=-13.01066800%2C-38.48298000&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location";
+
+function LocationIcon({ type }: { type: string }) {
+  if (type === "beach") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 15c2.2-2 4.2-2 6.2 0s4 2 6 0 3.8-2 5.8-.2M4 19c1.8-1.4 3.5-1.4 5.2 0s3.5 1.4 5.2 0 3.4-1.4 5.2 0M17 5a4 4 0 0 1 2 5.5M17 3v1M22 8h-1M20.5 4.5l-.8.8" />
+      </svg>
+    );
+  }
+
+  if (type === "community") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="8" cy="8" r="2.5" /><circle cx="16" cy="8" r="2.5" />
+        <path d="M3.5 18c.4-3 2-4.7 4.5-4.7s4.1 1.7 4.5 4.7M11.5 18c.4-3 2-4.7 4.5-4.7s4.1 1.7 4.5 4.7" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m4 9 8-5 8 5M5 20h14M7 18v-7M12 18v-7M17 18v-7" />
+    </svg>
+  );
+}
+
 export function HomePage({ locale }: { locale: Locale }) {
   const content = homeContent[locale];
   const mainRef = useRef<HTMLElement>(null);
@@ -229,10 +257,26 @@ export function HomePage({ locale }: { locale: Locale }) {
             />
           </div>
           <div className="visit__details">
-            <p>{content.visitBody}</p>
-            <a className="round-link round-link--blue" href="https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA" target="_blank" rel="noreferrer">
-              <span>{locale === "pt" ? "Como chegar" : "Get directions"}</span><i>↗</i>
-            </a>
+            <div className="visit__address-block">
+              <span className="visit__neighborhood">{content.visitNeighborhood}</span>
+              <p className="visit__address">{content.visitBody}</p>
+            </div>
+            <div className="visit__nearby">
+              {content.visitNearby.map((item) => (
+                <div className="visit__nearby-item" key={item.place}>
+                  <span className="visit__nearby-icon"><LocationIcon type={item.icon} /></span>
+                  <span><strong>{item.time}</strong><small>{item.place}</small></span>
+                </div>
+              ))}
+            </div>
+            <div className="visit__actions">
+              <a className="round-link round-link--blue" href={GOOGLE_MAPS_ROUTE} target="_blank" rel="noreferrer">
+                <span>{content.visitMapsLabel}</span><i aria-hidden="true">↗</i>
+              </a>
+              <a className="round-link round-link--waze" href={WAZE_ROUTE} target="_blank" rel="noreferrer">
+                <span>{content.visitWazeLabel}</span><i aria-hidden="true">↗</i>
+              </a>
+            </div>
           </div>
         </div>
       </section>
