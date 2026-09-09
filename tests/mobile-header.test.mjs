@@ -25,16 +25,16 @@ test("collapses the mobile wordmark only while the header is compact", async () 
 
   assert.match(
     styles,
-    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*opacity:\s*0/s,
+    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*clip-path:\s*inset\(0 100% 0 0\)/s,
   );
 
   assert.match(
     styles,
-    /\.brand__official-name\s*\{[^}]*transition:[^}]*opacity\s+\.52s[^}]*transform\s+\.6s/s,
+    /\.brand__official-name\s*\{[^}]*clip-path:\s*inset\(0 0 0 0\)[^}]*transition:[^}]*clip-path\s+\.7s\s+var\(--ease-in-out\)/s,
   );
   assert.match(
     styles,
-    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*transform:\s*translate3d\(-10px,\s*0,\s*0\)/s,
+    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*opacity:\s*1[^}]*transform:\s*none/s,
   );
   assert.doesNotMatch(
     styles,
@@ -53,6 +53,10 @@ test("keeps the mobile brand and menu toggle on the same stable center line", as
     styles,
     /@media \(max-width:\s*760px\)[\s\S]*?\.site-header \.menu-toggle\s*\{[^}]*position:\s*static[^}]*height:\s*49px[^}]*transform:\s*none/s,
   );
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header-spacer\s*\{[^}]*height:\s*88px/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header__main[^}]*min-height:\s*82px/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header--compact \.site-header__main\s*\{[^}]*min-height:\s*69px/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header\s*\{[^}]*transition:[^}]*background\s+\.65s\s+var\(--ease-in-out\)/s);
 });
 
 test("makes the brand return home or scroll the current home page to the top", async () => {

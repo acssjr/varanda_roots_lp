@@ -85,7 +85,7 @@ img { object-fit: cover; }
 .brand { display: inline-flex; align-items: center; gap: 11px; width: 216px; height: 52px; color: var(--blue); transition: height .45s cubic-bezier(.22,1,.36,1), color .4s ease; }
 .brand__official-icon, .brand__official-name { display: block; flex: 0 0 auto; background: currentColor; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: contain; mask-size: contain; }
 .brand__official-icon { width: 62px; aspect-ratio: 1517.391 / 874.163; -webkit-mask-image: url("/brand/iconevarandaroots.svg"); mask-image: url("/brand/iconevarandaroots.svg"); }
-.brand__official-name { width: 142px; aspect-ratio: 1429.964 / 179.06; opacity: 1; transform: translate3d(0,0,0); transition: opacity .52s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); will-change: opacity, transform; -webkit-mask-image: url("/brand/nome-varanda-roots.svg"); mask-image: url("/brand/nome-varanda-roots.svg"); }
+.brand__official-name { width: 142px; aspect-ratio: 1429.964 / 179.06; clip-path: inset(0 0 0 0); opacity: 1; transform: none; transition: clip-path .7s var(--ease-in-out); will-change: clip-path; -webkit-mask-image: url("/brand/nome-varanda-roots.svg"); mask-image: url("/brand/nome-varanda-roots.svg"); }
 .main-navigation { display: flex; align-items: center; gap: clamp(18px, 2.2vw, 44px); font-size: .93rem; font-weight: 600; }
 .main-navigation a { position: relative; padding-block: 8px; }
 .main-navigation a::after { position: absolute; right: 0; bottom: 1px; left: 0; height: 2px; content: ""; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .35s ease; }
@@ -273,20 +273,21 @@ img { object-fit: cover; }
 
 @media (max-width: 760px) {
   :root { --shell: calc(100% - 36px); }
-  .site-header-spacer { height: 78px; }
+  .site-header-spacer { height: 88px; }
   .site-header__stripe { height: 6px; }
   .site-header__utility { display: none; }
-  .site-header__main, .site-header--compact .site-header__main { grid-template-columns: minmax(0, 1fr) auto; min-height: 72px; padding-block: 8px; }
+  .site-header { color: var(--ink); background: var(--white); transition: color .65s var(--ease-in-out), background .65s var(--ease-in-out), box-shadow .45s var(--ease-out); }
+  .site-header__main { grid-template-columns: minmax(0, 1fr) auto; min-height: 82px; padding-block: 8px; transition: min-height .65s var(--ease-in-out), padding .65s var(--ease-in-out); }
+  .site-header--compact .site-header__main { min-height: 69px; }
   .site-header__brand-link { display: inline-flex; align-items: center; height: 49px; }
   .brand, .brand--compact { width: 169px; height: 49px; color: var(--blue); }
   .brand__official-icon, .site-header--compact .brand__official-icon { width: 49px; }
   .brand__official-name, .site-header--compact .brand__official-name { width: 108px; }
-  .site-header { color: var(--ink); background: var(--white); }
   .site-header--compact { color: var(--white); background: var(--blue); }
   .site-header--compact .brand { color: var(--yellow); }
-  .site-header--compact:not(.site-header--menu-open) .brand__official-name { opacity: 0; transform: translate3d(-10px, 0, 0); pointer-events: none; }
+  .site-header--compact:not(.site-header--menu-open) .brand__official-name { clip-path: inset(0 100% 0 0); opacity: 1; transform: none; pointer-events: none; }
   .site-header--menu-open .brand, .site-header--menu-open .brand--compact { gap: 11px; width: 169px; color: var(--yellow); }
-  .site-header--menu-open .brand__official-name { width: 108px; opacity: 1; transform: translate3d(0, 0, 0); }
+  .site-header--menu-open .brand__official-name { width: 108px; clip-path: inset(0 0 0 0); opacity: 1; transform: none; }
   .site-header .menu-toggle { position: static; z-index: 2; display: inline-flex !important; grid-column: 2; align-self: center; align-items: center; justify-self: end; width: auto; height: 49px; padding: 0; color: var(--blue); line-height: 1; opacity: 1; visibility: visible; transform: none; }
   .site-header--compact .menu-toggle { color: var(--yellow); }
   .site-header--menu-open .menu-toggle { color: var(--yellow); }
