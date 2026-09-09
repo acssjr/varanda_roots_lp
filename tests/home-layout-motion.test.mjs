@@ -35,3 +35,12 @@ test("reveals the yellow section and class cards once from below", async () => {
   assert.match(home, /stagger:\s*0?\.07/);
   assert.match(home, /once:\s*true/);
 });
+
+test("places the mobile class action in the upper-right corner", async () => {
+  const styles = await readFile(stylesPath, "utf8");
+
+  assert.match(
+    styles,
+    /@media \(max-width:\s*760px\)[\s\S]*?\.class-card__footer i\s*\{[^}]*position:\s*absolute[^}]*top:\s*24px[^}]*right:\s*24px/s,
+  );
+});

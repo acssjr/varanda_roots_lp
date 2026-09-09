@@ -71,7 +71,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduceMotion) return;
 
-      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
+      gsap.utils.toArray<HTMLElement>("[data-reveal]:not(.class-card)").forEach((element) => {
         gsap.from(element, {
           y: 54,
           opacity: 0,
@@ -80,6 +80,43 @@ export function HomePage({ locale }: { locale: Locale }) {
           scrollTrigger: { trigger: element, start: "top 86%", once: true },
         });
       });
+
+      gsap.fromTo(
+        ".manifest",
+        { clipPath: "inset(100% 0 0 0)" },
+        {
+          clipPath: "inset(0% 0 0 0)",
+          duration: 0.85,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".manifest", start: "top 94%", once: true },
+        },
+      );
+
+      gsap.fromTo(
+        ".manifest__grid > *",
+        { yPercent: 8, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.07,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".manifest", start: "top 90%", once: true },
+        },
+      );
+
+      gsap.fromTo(
+        ".class-card",
+        { yPercent: 8, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.65,
+          stagger: 0.07,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".class-grid", start: "top 88%", once: true },
+        },
+      );
 
       gsap.from(".duo__image-wrap", {
         scale: 0.96,

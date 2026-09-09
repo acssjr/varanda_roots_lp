@@ -313,6 +313,8 @@ img { object-fit: cover; }
   .section-heading > p { margin-top: 24px; }
   .class-grid, .internal-grid { grid-template-columns: 1fr; }
   .class-card { min-height: 440px; border-right: 0; border-bottom: 1px solid currentColor; }
+  .class-card__body { position: relative; }
+  .class-card__footer i { position: absolute; top: 24px; right: 24px; }
   .internal-card { min-height: 0; border-right: 0; border-bottom: 1px solid currentColor; }
   .class-card:last-child, .internal-card:last-child { border-bottom: 0; }
   .class-card h3 { margin-top: 46px; }
