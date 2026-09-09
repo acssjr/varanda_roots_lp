@@ -7,11 +7,18 @@ const contentPath = new URL("../lib/site-content.ts", import.meta.url);
 const stylesPath = new URL("../app/globals.css", import.meta.url);
 
 test("offers Google Maps and Waze routes from the location panel", async () => {
-  const homePage = await readFile(homePagePath, "utf8");
+  const [homePage, content] = await Promise.all([
+    readFile(homePagePath, "utf8"),
+    readFile(contentPath, "utf8"),
+  ]);
 
   assert.match(homePage, /google\.com\/maps\/dir\/\?api=1/);
   assert.match(homePage, /ul\.waze\.com\/ul\?place=ChIJ52z4fWsDFgcRf1jeybK-zmM/);
   assert.match(homePage, /className="visit__actions"/);
+  assert.match(homePage, /function RouteServiceIcon/);
+  assert.match(homePage, /<RouteServiceIcon service="maps"/);
+  assert.match(homePage, /<RouteServiceIcon service="waze"/);
+  assert.match(content, /visitMapsLabel:\s*"Maps"/);
 });
 
 test("shows the neighborhood and three researched walking references", async () => {
@@ -35,6 +42,6 @@ test("keeps the enriched location panel responsive", async () => {
   const styles = await readFile(stylesPath, "utf8");
 
   assert.match(styles, /\.visit__nearby-item\s*\{/);
-  assert.match(styles, /\.visit__actions\s*\{/);
-  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.visit__actions\s*\{[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(styles, /\.visit__actions\s*\{[^}]*display:\s*flex[^}]*flex-wrap:\s*wrap/s);
+  assert.match(styles, /\.visit__actions \.round-link\s*\{[^}]*width:\s*max-content/s);
 });

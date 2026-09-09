@@ -13,6 +13,33 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const GOOGLE_MAPS_ROUTE = "https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA";
 const WAZE_ROUTE = "https://ul.waze.com/ul?place=ChIJ52z4fWsDFgcRf1jeybK-zmM&ll=-13.01066800%2C-38.48298000&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location";
 
+function ArrowGlyph() {
+  return <i aria-hidden="true"><span>↗</span></i>;
+}
+
+function RouteServiceIcon({ service }: { service: "maps" | "waze" }) {
+  if (service === "maps") {
+    return (
+      <svg className="route-service-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#34a853" d="M12 2a7.5 7.5 0 0 0-7.5 7.5C4.5 15.1 12 22 12 22s7.5-6.9 7.5-12.5A7.5 7.5 0 0 0 12 2Z" />
+        <path fill="#fbbc04" d="M4.8 7.4 12 22v-9.4a3.1 3.1 0 0 1-2.9-2L4.8 7.4Z" />
+        <path fill="#4285f4" d="M12 2a7.5 7.5 0 0 0-7.2 5.4l4.3 3.2A3.1 3.1 0 0 1 12 6.4V2Z" />
+        <path fill="#ea4335" d="M12 2v4.4a3.1 3.1 0 0 1 2.9 4.2l4.1 3.1c.3-1.3.5-2.7.5-4.2A7.5 7.5 0 0 0 12 2Z" />
+        <circle cx="12" cy="9.5" r="2" fill="#fff" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg className="route-service-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 12.2C4 7.7 7.5 4 12 4s8 3.7 8 8.2c0 3.7-2.8 6.8-6.5 7.7H9.7a7.9 7.9 0 0 1-3.5-1.8L3 19l1.2-3.1a8 8 0 0 1-.2-3.7Z" fill="#33ccff" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="9" cy="12" r="1" fill="currentColor" />
+      <circle cx="15" cy="12" r="1" fill="currentColor" />
+      <path d="M9 15c1.7 1.1 4.3 1.1 6 0" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
 function LocationIcon({ type }: { type: string }) {
   if (type === "beach") {
     return (
@@ -180,7 +207,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <h1>{active.title}</h1>
             <p>{active.text}</p>
             <Link className="round-link round-link--yellow" href={`/${locale}${active.href}`}>
-              <span>{content.discover}</span><i aria-hidden="true">↗</i>
+              <span>{content.discover}</span><ArrowGlyph />
             </Link>
           </div>
           <div className="hero__controls" aria-label={locale === "pt" ? "Selecionar imagem" : "Select image"}>
@@ -219,7 +246,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 </div>
                 <div className="class-card__body">
                   <span>0{index + 1}</span><h3>{title}</h3>
-                  <div className="class-card__footer"><p>{body}</p><i aria-hidden="true">↗</i></div>
+                  <div className="class-card__footer"><p>{body}</p><ArrowGlyph /></div>
                 </div>
               </article>
             ))}
@@ -240,7 +267,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 <span className="agenda-item__number">0{index + 1}</span>
                 <div className="agenda-item__title"><span>{item.type}</span><h3>{item.title}</h3></div>
                 <div className="agenda-item__meta"><span>{item.place}</span><strong>{item.status}</strong></div>
-                <i aria-hidden="true">↗</i>
+                <ArrowGlyph />
               </article>
             ))}
           </div>
@@ -259,7 +286,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <span className="eyebrow" data-reveal>{content.courseKicker}</span>
             <h2 data-reveal>{content.courseTitle}</h2>
             <p data-reveal>{content.courseBody}</p>
-            <Link className="round-link round-link--blue" href={`/${locale}/${locale === "pt" ? "curso" : "course"}`} data-reveal><span>{content.courseLink}</span><i>↗</i></Link>
+            <Link className="round-link round-link--blue" href={`/${locale}/${locale === "pt" ? "curso" : "course"}`} data-reveal><span>{content.courseLink}</span><ArrowGlyph /></Link>
           </div>
         </div>
       </section>
@@ -308,10 +335,10 @@ export function HomePage({ locale }: { locale: Locale }) {
             </div>
             <div className="visit__actions">
               <a className="round-link round-link--blue" href={GOOGLE_MAPS_ROUTE} target="_blank" rel="noreferrer">
-                <span>{content.visitMapsLabel}</span><i aria-hidden="true">↗</i>
+                <RouteServiceIcon service="maps" /><span>{content.visitMapsLabel}</span><ArrowGlyph />
               </a>
               <a className="round-link round-link--waze" href={WAZE_ROUTE} target="_blank" rel="noreferrer">
-                <span>{content.visitWazeLabel}</span><i aria-hidden="true">↗</i>
+                <RouteServiceIcon service="waze" /><span>{content.visitWazeLabel}</span><ArrowGlyph />
               </a>
             </div>
           </div>
