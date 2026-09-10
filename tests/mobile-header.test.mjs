@@ -69,5 +69,7 @@ test("makes the brand return home or scroll the current home page to the top", a
 test("protects mobile hero copy with a strong lower-half shade", async () => {
   const styles = await readFile(stylesPath, "utf8");
 
-  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.hero__shade\s*\{[^}]*rgba\(5,6,9,\.82\)\s*50%[^}]*transparent\s*82%/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.hero__shade\s*\{[^}]*rgba\(5,6,9,\.72\)\s*39%[^}]*rgba\(5,6,9,\.94\)\s*57%/s);
+  assert.match(styles, /\.hero__slide:nth-child\(1\) \.hero__mobile-image\s*\{[^}]*translateY\(-8%\)[^}]*scale\(1\.18\)/s);
+  assert.match(styles, /\.hero__copy::before\s*\{[^}]*rgba\(3,4,8,\.86\)[^}]*blur\(14px\)/s);
 });
