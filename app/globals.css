@@ -107,6 +107,7 @@ img { object-fit: cover; }
 
 .hero { position: relative; min-height: calc(100svh - 180px); color: var(--white); background: #252525; isolation: isolate; }
 .hero__slides, .hero__slide, .hero__shade { position: absolute; inset: 0; }
+.hero__slides { overflow: hidden; }
 .hero__slide { visibility: hidden; opacity: 0; will-change: transform, opacity; }
 .hero__slide:first-child { visibility: visible; opacity: 1; }
 .hero__slide img { filter: saturate(.86) contrast(1.02); }
