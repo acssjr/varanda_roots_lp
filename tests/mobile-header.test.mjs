@@ -66,8 +66,8 @@ test("makes the brand return home or scroll the current home page to the top", a
   assert.match(header, /window\.scrollTo\(\{\s*top:\s*0,\s*behavior:\s*"smooth"\s*\}\)/s);
 });
 
-test("protects mobile hero copy with a localized lower-third shade", async () => {
+test("protects mobile hero copy with a strong lower-half shade", async () => {
   const styles = await readFile(stylesPath, "utf8");
 
-  assert.match(styles, /\.hero__shade\s*\{[^}]*rgba\(8,\s*8,\s*10,\s*0\)\s*72%/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.hero__shade\s*\{[^}]*rgba\(5,6,9,\.82\)\s*50%[^}]*transparent\s*82%/s);
 });

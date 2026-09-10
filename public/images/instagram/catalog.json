@@ -1,0 +1,167 @@
+[
+  {
+    "shortcode": "DYkNlnOjRZq",
+    "sourceUrl": "https://www.instagram.com/p/DYkNlnOjRZq/?img_index=1",
+    "type": "photo",
+    "people": ["Pía", "PC"],
+    "description": "Pía e PC juntos, usando casacos azul-marinho da Varanda Roots em um ambiente com plantas.",
+    "alt": "Pía e PC sorrindo juntos com casacos da Varanda Roots.",
+    "original": "assets/media-source/images/instagram/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.jpg",
+    "optimized": "/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp"
+  },
+  {
+    "shortcode": "Davphbzv178",
+    "sourceUrl": "https://www.instagram.com/p/Davphbzv178/",
+    "type": "reel-thumbnail",
+    "people": ["Pía", "PC"],
+    "description": "Pía e PC dançando no centro de um evento de forró com público ao redor.",
+    "alt": "Pía e PC dançando forró em um evento com público ao redor.",
+    "original": "assets/media-source/images/instagram/reels/pia-pc-dancando-em-evento-Davphbzv178.jpg",
+    "optimized": "/images/instagram/optimized/reels/pia-pc-dancando-em-evento-Davphbzv178.webp"
+  },
+  {
+    "shortcode": "DYCqkwpgo5X",
+    "sourceUrl": "https://www.instagram.com/p/DYCqkwpgo5X/",
+    "type": "reel-thumbnail",
+    "people": ["Pía", "PC"],
+    "description": "Pía e PC dançando em espaço interno, com roupas amarelas e fundo claro.",
+    "alt": "Pía e PC dançando juntos com roupas amarelas.",
+    "original": "assets/media-source/images/instagram/reels/pia-pc-dancando-look-amarelo-DYCqkwpgo5X.jpg",
+    "optimized": "/images/instagram/optimized/reels/pia-pc-dancando-look-amarelo-DYCqkwpgo5X.webp"
+  },
+  {
+    "shortcode": "DT0TNt6Dvfl",
+    "sourceUrl": "https://www.instagram.com/p/DT0TNt6Dvfl/",
+    "type": "reel-thumbnail",
+    "people": ["Pía", "PC"],
+    "description": "Pía e PC dançando ao ar livre no evento Paraíso Alucinado, diante do público.",
+    "alt": "Pía e PC dançando no evento Paraíso Alucinado.",
+    "original": "assets/media-source/images/instagram/reels/pia-pc-dancando-paraiso-alucina-DT0TNt6Dvfl.jpg",
+    "optimized": "/images/instagram/optimized/reels/pia-pc-dancando-paraiso-alucina-DT0TNt6Dvfl.webp"
+  },
+  {
+    "shortcode": "CyvrSRQIONU",
+    "sourceUrl": "https://www.instagram.com/p/CyvrSRQIONU/",
+    "type": "reel-thumbnail",
+    "people": ["Pía", "PC"],
+    "description": "Retrato descontraído de PC e Pía ao ar livre, com praia e cidade desfocadas ao fundo.",
+    "alt": "PC e Pía sorrindo ao ar livre diante de uma paisagem litorânea.",
+    "original": "assets/media-source/images/instagram/reels/pia-pc-retrato-ao-ar-livre-CyvrSRQIONU.jpg",
+    "optimized": "/images/instagram/optimized/reels/pia-pc-retrato-ao-ar-livre-CyvrSRQIONU.webp"
+  },
+  {
+    "id": "google-varanda-01",
+    "type": "class-photo",
+    "description": "Aula coletiva em movimento sob uma cobertura de madeira, conduzida por Pía.",
+    "recommendedUse": ["hero-aulas", "card-comecar", "mobile-hero"],
+    "original": "assets/media-source/images/instagram/google/google-varanda-01.jpg",
+    "landscape": "/images/instagram/optimized/generated/hero/aulas-comunidade-editorial.webp",
+    "portrait": "/images/instagram/optimized/generated/cards/comecar-aula-editorial.webp"
+  },
+  {
+    "id": "google-varanda-02",
+    "type": "dance-photo",
+    "people": ["Pía", "PC"],
+    "description": "Pía e PC dançando em um salão com a comunidade ao fundo.",
+    "recommendedUse": ["hero-eventos", "card-evoluir", "mobile-hero"],
+    "original": "assets/media-source/images/instagram/google/google-varanda-02.jpg",
+    "landscape": "/images/instagram/optimized/generated/hero/danca-conexao-editorial.webp",
+    "portrait": "/images/instagram/optimized/generated/cards/evoluir-conexao-editorial.webp"
+  },
+  {
+    "id": "google-varanda-03",
+    "type": "community-photo",
+    "description": "Retrato espontâneo de uma turma da Varanda Roots.",
+    "recommendedUse": ["hero-curso", "card-mergulhar", "gallery"],
+    "original": "assets/media-source/images/instagram/google/google-varanda-03.jpg",
+    "landscape": "/images/instagram/optimized/generated/hero/comunidade-editorial.webp",
+    "portrait": "/images/instagram/optimized/generated/cards/mergulhar-comunidade-editorial.webp"
+  },
+  {
+    "id": "google-varanda-04",
+    "type": "large-class-photo",
+    "description": "Retrato de uma turma grande no salão da Varanda Roots.",
+    "recommendedUse": ["gallery", "institutional-community"],
+    "original": "assets/media-source/images/instagram/google/google-varanda-04.jpg",
+    "landscape": "/images/instagram/optimized/generated/hero/turma-editorial.webp"
+  },
+  {
+    "shortcode": "Dax6IEonKfx",
+    "sourceUrl": "https://www.instagram.com/p/Dax6IEonKfx/",
+    "type": "carousel",
+    "assetCount": 9,
+    "people": ["Pía", "PC", "comunidade"],
+    "classification": ["evento", "dança", "público", "ensino"],
+    "sourceDirectory": "assets/media-source/images/instagram/carousels/Dax6IEonKfx",
+    "optimizedDirectory": "/images/instagram/optimized/carousels/Dax6IEonKfx",
+    "usedOn": ["aulas", "eventos", "pia-e-pc"]
+  },
+  {
+    "shortcode": "DVZXP96kfql",
+    "sourceUrl": "https://www.instagram.com/p/DVZXP96kfql/?img_index=4",
+    "type": "carousel",
+    "assetCount": 4,
+    "people": ["Pía"],
+    "classification": ["retrato", "dança", "mar", "Salvador"],
+    "sourceDirectory": "assets/media-source/images/instagram/carousels/DVZXP96kfql",
+    "optimizedDirectory": "/images/instagram/optimized/carousels/DVZXP96kfql",
+    "usedOn": ["pia-e-pc"]
+  },
+  {
+    "shortcode": "DNybhLIWhMx",
+    "sourceUrl": "https://www.instagram.com/p/DNybhLIWhMx/?img_index=1",
+    "type": "carousel",
+    "assetCount": 13,
+    "people": ["Pía", "PC"],
+    "classification": ["viagem", "retratos", "paisagem", "dupla"],
+    "sourceDirectory": "assets/media-source/images/instagram/carousels/DNybhLIWhMx",
+    "optimizedDirectory": "/images/instagram/optimized/carousels/DNybhLIWhMx",
+    "usedOn": ["curso", "pia-e-pc"]
+  },
+  {
+    "shortcode": "DNiwAdsIBiD",
+    "sourceUrl": "https://www.instagram.com/p/DNiwAdsIBiD/?img_index=6",
+    "type": "carousel",
+    "assetCount": 6,
+    "people": ["Pía", "PC", "comunidade"],
+    "classification": ["viagem", "Berlim", "internacional", "comunidade"],
+    "sourceDirectory": "assets/media-source/images/instagram/carousels/DNiwAdsIBiD",
+    "optimizedDirectory": "/images/instagram/optimized/carousels/DNiwAdsIBiD",
+    "usedOn": ["pia-e-pc"]
+  },
+  {
+    "shortcode": "DN3T2tHWCik",
+    "sourceUrl": "https://www.instagram.com/p/DN3T2tHWCik/",
+    "type": "reel-thumbnail",
+    "people": ["Pía", "PC"],
+    "classification": ["evento", "dança", "Matrizes"],
+    "source": "assets/media-source/images/instagram/reels/DN3T2tHWCik/DN3T2tHWCik_20250827.jpg",
+    "optimized": "/images/instagram/optimized/reels/DN3T2tHWCik/DN3T2tHWCik_20250827.webp",
+    "usedOn": ["eventos"]
+  },
+  {
+    "shortcode": "C2IB07Kg5Cn",
+    "sourceUrl": "https://www.instagram.com/p/C2IB07Kg5Cn/",
+    "type": "reel-thumbnail",
+    "people": ["Pía", "PC"],
+    "classification": ["aula", "dança", "demonstração"],
+    "source": "assets/media-source/images/instagram/reels/C2IB07Kg5Cn/C2IB07Kg5Cn_20240115.jpg",
+    "optimized": "/images/instagram/optimized/reels/C2IB07Kg5Cn/C2IB07Kg5Cn_20240115.webp",
+    "usedOn": ["aulas"]
+  },
+  {
+    "shortcode": "DMFtAiWt5NS",
+    "sourceUrl": "https://www.instagram.com/p/DMFtAiWt5NS/",
+    "type": "video",
+    "people": ["Pía", "PC"],
+    "classification": ["dança", "baile", "movimento"],
+    "source": "assets/media-source/videos/DMFtAiWt5NS/DMFtAiWt5NS_20250714.mp4",
+    "sourceDurationSeconds": 51.48,
+    "sourceBytes": 20700609,
+    "optimized": "/videos/instagram/DMFtAiWt5NS/optimized/danca-pia-varanda-loop.mp4",
+    "optimizedDurationSeconds": 15,
+    "optimizedBytes": 2869242,
+    "poster": "/videos/instagram/DMFtAiWt5NS/optimized/danca-pia-varanda-poster.webp",
+    "usedOn": ["pia-e-pc"]
+  }
+]

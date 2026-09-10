@@ -6,16 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ActionArrow } from "./ActionArrow";
 import { homeContent, type Locale } from "@/lib/site-content";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const GOOGLE_MAPS_ROUTE = "https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA";
 const WAZE_ROUTE = "https://ul.waze.com/ul?place=ChIJ52z4fWsDFgcRf1jeybK-zmM&ll=-13.01066800%2C-38.48298000&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location";
-
-function ArrowGlyph() {
-  return <i aria-hidden="true"><span>↗</span></i>;
-}
 
 function RouteServiceIcon({ service }: { service: "maps" | "waze" }) {
   if (service === "maps") {
@@ -195,7 +192,8 @@ export function HomePage({ locale }: { locale: Locale }) {
         <div className="hero__slides" ref={slidesRef}>
           {content.slides.map((slide, index) => (
             <div className="hero__slide" key={slide.title} aria-hidden={index !== activeSlide}>
-              <Image src={slide.image} alt={slide.imageAlt} fill priority sizes="100vw" />
+              <Image className="hero__desktop-image" src={slide.image} alt={slide.imageAlt} fill priority={index === 0} quality={88} sizes="100vw" />
+              <Image className="hero__mobile-image" src={slide.mobileImage} alt="" fill priority={index === 0} quality={88} sizes="100vw" />
             </div>
           ))}
         </div>
@@ -206,8 +204,8 @@ export function HomePage({ locale }: { locale: Locale }) {
             <span className="hero__kicker">{active.kicker}</span>
             <h1>{active.title}</h1>
             <p>{active.text}</p>
-            <Link className="round-link round-link--yellow" href={`/${locale}${active.href}`}>
-              <span>{content.discover}</span><ArrowGlyph />
+            <Link className="round-link round-link--yellow action-link" href={`/${locale}${active.href}`}>
+              <span>{content.discover}</span><ActionArrow />
             </Link>
           </div>
           <div className="hero__controls" aria-label={locale === "pt" ? "Selecionar imagem" : "Select image"}>
@@ -242,11 +240,11 @@ export function HomePage({ locale }: { locale: Locale }) {
             {content.classCards.map(([title, body], index) => (
               <article className="class-card" key={title} data-reveal>
                 <div className="class-card__image">
-                  <Image src={content.slides[[0, 2, 3][index]].image} alt="" fill sizes="(max-width: 760px) 100vw, 33vw" />
+                  <Image src={content.classImages[index]} alt="" fill quality={82} sizes="(max-width: 760px) calc(100vw - 36px), 33vw" />
                 </div>
                 <div className="class-card__body">
                   <span>0{index + 1}</span><h3>{title}</h3>
-                  <div className="class-card__footer"><p>{body}</p><ArrowGlyph /></div>
+                  <div className="class-card__footer"><p>{body}</p><ActionArrow /></div>
                 </div>
               </article>
             ))}
@@ -263,12 +261,12 @@ export function HomePage({ locale }: { locale: Locale }) {
           </div>
           <div className="agenda-list" data-reveal>
             {content.agendaItems.map((item, index) => (
-              <article className="agenda-item" key={item.title}>
+              <Link className="agenda-item" href={`/${locale}${item.href}`} key={item.title} aria-label={`${item.title}: ${item.status}`}>
                 <span className="agenda-item__number">0{index + 1}</span>
                 <div className="agenda-item__title"><span>{item.type}</span><h3>{item.title}</h3></div>
                 <div className="agenda-item__meta"><span>{item.place}</span><strong>{item.status}</strong></div>
-                <ArrowGlyph />
-              </article>
+                <ActionArrow />
+              </Link>
             ))}
           </div>
           <Link className="text-link" href={`/${locale}/${locale === "pt" ? "eventos" : "events"}`}>{content.allEvents} →</Link>
@@ -286,7 +284,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <span className="eyebrow" data-reveal>{content.courseKicker}</span>
             <h2 data-reveal>{content.courseTitle}</h2>
             <p data-reveal>{content.courseBody}</p>
-            <Link className="round-link round-link--blue" href={`/${locale}/${locale === "pt" ? "curso" : "course"}`} data-reveal><span>{content.courseLink}</span><ArrowGlyph /></Link>
+            <Link className="round-link round-link--blue action-link" href={`/${locale}/${locale === "pt" ? "curso" : "course"}`} data-reveal><span>{content.courseLink}</span><ActionArrow /></Link>
           </div>
         </div>
       </section>
@@ -294,7 +292,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <section className="duo chapter chapter--dark">
         <div className="page-shell duo__grid">
           <div className="duo__image-wrap">
-            <Image src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=86" alt="" fill sizes="(max-width: 800px) 100vw, 50vw" />
+            <Image src="/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp" alt="" fill sizes="(max-width: 800px) calc(100vw - 32px), 50vw" />
           </div>
           <div className="section-heading duo__copy">
             <span className="eyebrow eyebrow--yellow" data-reveal>{content.duoKicker}</span>
@@ -334,11 +332,11 @@ export function HomePage({ locale }: { locale: Locale }) {
               ))}
             </div>
             <div className="visit__actions">
-              <a className="round-link round-link--blue" href={GOOGLE_MAPS_ROUTE} target="_blank" rel="noreferrer">
-                <RouteServiceIcon service="maps" /><span>{content.visitMapsLabel}</span><ArrowGlyph />
+              <a className="round-link round-link--blue action-link" href={GOOGLE_MAPS_ROUTE} target="_blank" rel="noreferrer">
+                <RouteServiceIcon service="maps" /><span>{content.visitMapsLabel}</span><ActionArrow />
               </a>
-              <a className="round-link round-link--waze" href={WAZE_ROUTE} target="_blank" rel="noreferrer">
-                <RouteServiceIcon service="waze" /><span>{content.visitWazeLabel}</span><ArrowGlyph />
+              <a className="round-link round-link--waze action-link" href={WAZE_ROUTE} target="_blank" rel="noreferrer">
+                <RouteServiceIcon service="waze" /><span>{content.visitWazeLabel}</span><ActionArrow />
               </a>
             </div>
           </div>

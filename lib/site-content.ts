@@ -47,12 +47,21 @@ export const homeContent = {
     eyebrow: "Rio Vermelho · Salvador",
     slides: [
       {
+        kicker: "Curso online",
+        title: "Roots para atravessar distâncias.",
+        text: "Um percurso online com Pía e PC para quem já tem alguma base no forró.",
+        href: "/curso",
+        image: "/images/instagram/optimized/generated/hero/comunidade-editorial.webp",
+        mobileImage: "/images/instagram/optimized/generated/cards/mergulhar-comunidade-editorial.webp",
+        imageAlt: "Turma da Varanda Roots reunida em uma aula.",
+      },
+      {
         kicker: "Aulas presenciais",
         title: "O forró começa no encontro.",
         text: "Do primeiro passo ao aprofundamento no Roots.",
         href: "/aulas",
-        image:
-          "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=2200&q=86",
+        image: "/images/instagram/optimized/generated/hero/aulas-comunidade-editorial.webp",
+        mobileImage: "/images/instagram/optimized/generated/cards/comecar-aula-editorial.webp",
         imageAlt: "",
       },
       {
@@ -60,17 +69,8 @@ export const homeContent = {
         title: "A pista também ensina.",
         text: "Música, presença e comunidade em movimento.",
         href: "/eventos",
-        image:
-          "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=2200&q=86",
-        imageAlt: "",
-      },
-      {
-        kicker: "Curso online",
-        title: "Roots para atravessar distâncias.",
-        text: "Um percurso online com Pía e PC para quem já tem alguma base no forró.",
-        href: "/curso",
-        image:
-          "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=2200&q=86",
+        image: "/images/instagram/optimized/generated/hero/danca-conexao-editorial.webp",
+        mobileImage: "/images/instagram/optimized/generated/cards/evoluir-conexao-editorial.webp",
         imageAlt: "",
       },
       {
@@ -78,8 +78,8 @@ export const homeContent = {
         title: "Corpo, música e pista.",
         text: "Uma parceria construída entre o ensino, a pesquisa e a curadoria musical.",
         href: "/pia-e-pc",
-        image:
-          "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=86",
+        image: "/images/instagram/optimized/generated/hero/pia-pc-editorial.webp",
+        mobileImage: "/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp",
         imageAlt: "",
       },
     ],
@@ -98,14 +98,19 @@ export const homeContent = {
       ["Evoluir", "Para ampliar repertório, escuta e autonomia na dança."],
       ["Mergulhar", "Para aprofundar princípios, técnica e expressão no Roots."],
     ],
+    classImages: [
+      "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_5.webp",
+      "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_2.webp",
+      "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_3.webp",
+    ],
     learnMore: "Conheça as aulas",
     agendaKicker: "Agenda",
     agendaTitle: "Onde a Varanda acontece.",
     agendaNote: "Festas, música e formação no mesmo calendário.",
     agendaItems: [
-      { type: "Festa", title: "Varanda Roots Party", place: "Salvador · Bahia", status: "Próxima edição" },
-      { type: "Música", title: "Baile de Forró em Vinil", place: "Rio Vermelho", status: "Na pista" },
-      { type: "Formação", title: "Workshop com Pía e PC", place: "Brasil e exterior", status: "Agenda aberta" },
+      { type: "Festa", title: "Varanda Roots Party", place: "Salvador · Bahia", status: "Próxima edição", href: "/eventos#varanda-roots-party" },
+      { type: "Música", title: "Baile de Forró em Vinil", place: "Rio Vermelho", status: "Na pista", href: "/eventos#forro-em-vinil" },
+      { type: "Formação", title: "Workshop com Pía e PC", place: "Brasil e exterior", status: "Agenda aberta", href: "/eventos#workshops-e-festivais" },
     ],
     allEvents: "Ver eventos",
     courseKicker: "Aprenda o Roots com Pía e PC",
@@ -135,12 +140,21 @@ export const homeContent = {
     eyebrow: "Rio Vermelho · Salvador, Brazil",
     slides: [
       {
+        kicker: "Online course",
+        title: "Roots across distances.",
+        text: "An online path with Pía and PC for dancers who already know the basics.",
+        href: "/course",
+        image: "/images/instagram/optimized/generated/hero/comunidade-editorial.webp",
+        mobileImage: "/images/instagram/optimized/generated/cards/mergulhar-comunidade-editorial.webp",
+        imageAlt: "A Varanda Roots class gathered together.",
+      },
+      {
         kicker: "In-person classes",
         title: "Forró begins with connection.",
         text: "From the first step to a deeper exploration of Roots.",
         href: "/classes",
-        image:
-          "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=2200&q=86",
+        image: "/images/instagram/optimized/generated/hero/aulas-comunidade-editorial.webp",
+        mobileImage: "/images/instagram/optimized/generated/cards/comecar-aula-editorial.webp",
         imageAlt: "",
       },
       {
@@ -148,17 +162,8 @@ export const homeContent = {
         title: "The dance floor teaches too.",
         text: "Music, presence and community in motion.",
         href: "/events",
-        image:
-          "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=2200&q=86",
-        imageAlt: "",
-      },
-      {
-        kicker: "Online course",
-        title: "Roots across distances.",
-        text: "An online path with Pía and PC for dancers who already know the basics.",
-        href: "/course",
-        image:
-          "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=2200&q=86",
+        image: "/images/instagram/optimized/generated/hero/danca-conexao-editorial.webp",
+        mobileImage: "/images/instagram/optimized/generated/cards/evoluir-conexao-editorial.webp",
         imageAlt: "",
       },
       {
@@ -166,8 +171,8 @@ export const homeContent = {
         title: "Body, music and dance floor.",
         text: "A partnership shaped by teaching, research and musical curation.",
         href: "/pia-and-pc",
-        image:
-          "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=86",
+        image: "/images/instagram/optimized/generated/hero/pia-pc-editorial.webp",
+        mobileImage: "/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp",
         imageAlt: "",
       },
     ],
@@ -186,14 +191,19 @@ export const homeContent = {
       ["Evolve", "Expand your repertoire, listening and autonomy."],
       ["Go deeper", "Explore the principles, technique and expression of Roots."],
     ],
+    classImages: [
+      "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_5.webp",
+      "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_2.webp",
+      "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_3.webp",
+    ],
     learnMore: "Explore classes",
     agendaKicker: "Schedule",
     agendaTitle: "Where Varanda comes alive.",
     agendaNote: "Parties, music and learning on the same calendar.",
     agendaItems: [
-      { type: "Party", title: "Varanda Roots Party", place: "Salvador · Bahia", status: "Next edition" },
-      { type: "Music", title: "Forró Vinyl Dance", place: "Rio Vermelho", status: "On the dance floor" },
-      { type: "Learning", title: "Workshop with Pía and PC", place: "Brazil and abroad", status: "Open schedule" },
+      { type: "Party", title: "Varanda Roots Party", place: "Salvador · Bahia", status: "Next edition", href: "/events#varanda-roots-party" },
+      { type: "Music", title: "Forró Vinyl Dance", place: "Rio Vermelho", status: "On the dance floor", href: "/events#forro-em-vinil" },
+      { type: "Learning", title: "Workshop with Pía and PC", place: "Brazil and abroad", status: "Open schedule", href: "/events#workshops-e-festivais" },
     ],
     allEvents: "View events",
     courseKicker: "Learn Roots with Pía and PC",
