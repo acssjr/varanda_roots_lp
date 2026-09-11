@@ -34,6 +34,12 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   );
   assert.match(styles, /\.main-navigation\s*\{[^}]*top:\s*var\(--mobile-header-edge\)/s);
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
+
+  const mobileHeaderStyles = styles.slice(
+    styles.indexOf("@media (max-width: 760px)"),
+    styles.indexOf("@media (prefers-reduced-motion: reduce)", styles.indexOf("@media (max-width: 760px)")),
+  );
+  assert.match(mobileHeaderStyles, /\.site-header--menu-open\s*\{[^}]*background:\s*var\(--blue\)/s);
 });
 
 test("defines a subtle boundary only for light page headers", async () => {

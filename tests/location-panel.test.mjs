@@ -33,9 +33,9 @@ test("shows the neighborhood and three researched walking references", async () 
   assert.match(content, /Praia do Buracão/);
   assert.match(content, /Vila Caramuru/);
   assert.match(content, /Largo de Santana/);
-  assert.match(content, /9 min a pé/);
-  assert.match(content, /13 min a pé/);
-  assert.match(content, /18 min a pé/);
+  assert.match(content, /walk:\s*\{ time: "9 min", distance: "600 m" \}/);
+  assert.match(content, /walk:\s*\{ time: "13 min", distance: "950 m" \}/);
+  assert.match(content, /walk:\s*\{ time: "18 min", distance: "1,3 km" \}/);
 });
 
 test("switches between fixed walking, cycling and driving references", async () => {

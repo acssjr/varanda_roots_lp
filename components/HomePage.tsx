@@ -13,6 +13,8 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const GOOGLE_MAPS_ROUTE = "https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA";
 const WAZE_ROUTE = "https://ul.waze.com/ul?place=ChIJ52z4fWsDFgcRf1jeybK-zmM&ll=-13.01066800%2C-38.48298000&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location";
+type TravelMode = "walk" | "bike" | "car";
+const TRAVEL_MODES: TravelMode[] = ["walk", "bike", "car"];
 
 function HeroImage({ desktop, mobile, alt, eager }: { desktop: string; mobile: string; alt: string; eager: boolean }) {
   const common = { alt, quality: 88 } as const;
@@ -118,12 +120,40 @@ function LocationIcon({ type }: { type: string }) {
   );
 }
 
+function TravelModeIcon({ mode }: { mode: TravelMode }) {
+  if (mode === "walk") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="13" cy="4.5" r="2" />
+        <path d="m10.5 9 2.5-1.4 2.2 2.7 2.8 1.2M12.8 8l-1 5-3.2 3M11.8 13l3.1 2.3 1.3 4.2M8.6 16 6 20" />
+      </svg>
+    );
+  }
+
+  if (mode === "bike") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6" cy="16" r="3.5" /><circle cx="18" cy="16" r="3.5" />
+        <path d="m6 16 4-7 4 7H6Zm4-7h4l4 7M9 6h3" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m4 15 1.4-5h13.2l1.4 5v3H4v-3Zm2.2-5 1.5-3h8.6l1.5 3" />
+      <circle cx="7" cy="18" r="1.3" /><circle cx="17" cy="18" r="1.3" />
+    </svg>
+  );
+}
+
 export function HomePage({ locale }: { locale: Locale }) {
   const content = homeContent[locale];
   const mainRef = useRef<HTMLElement>(null);
   const slidesRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [loadedSlides, setLoadedSlides] = useState(() => new Set([0]));
+  const [travelMode, setTravelMode] = useState<TravelMode>("walk");
 
   const loadSlide = (index: number) => {
     setLoadedSlides((current) => {
@@ -469,11 +499,37 @@ export function HomePage({ locale }: { locale: Locale }) {
               <span className="visit__neighborhood">{content.visitNeighborhood}</span>
               <p className="visit__address">{content.visitBody}</p>
             </div>
+            <div className="visit__mode-switch" role="group" aria-label={content.visitTravelModeLabel}>
+              {TRAVEL_MODES.map((mode) => (
+                <button
+                  className="visit__mode-button"
+                  type="button"
+                  key={mode}
+                  aria-label={content.visitTravelModes[mode]}
+                  aria-pressed={travelMode === mode}
+                  onClick={() => setTravelMode(mode)}
+                >
+                  <TravelModeIcon mode={mode} />
+                </button>
+              ))}
+            </div>
             <div className="visit__nearby">
               {content.visitNearby.map((item) => (
                 <div className="visit__nearby-item" key={item.place}>
                   <span className="visit__nearby-icon"><LocationIcon type={item.icon} /></span>
-                  <span><strong>{item.time}</strong><small>{item.place}</small></span>
+                  <span className="visit__nearby-metrics" aria-live="polite">
+                    {TRAVEL_MODES.map((mode) => (
+                      <span
+                        className={`visit__nearby-metric ${travelMode === mode ? "is-active" : ""}`}
+                        aria-hidden={travelMode !== mode}
+                        key={mode}
+                      >
+                        <strong>{item.routes[mode].time}</strong>
+                        <em>{item.routes[mode].distance}</em>
+                      </span>
+                    ))}
+                    <small>{item.place}</small>
+                  </span>
                 </div>
               ))}
             </div>

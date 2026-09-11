@@ -40,7 +40,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
   const compactRef = useRef(false);
-  const dragStartRef = useRef<{ y: number; time: number } | null>(null);
+  const navigationRef = useRef<HTMLElement | null>(null);
+  const dragStartRef = useRef<{ y: number; time: number; pointerId: number } | null>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -98,36 +99,37 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   };
 
   const handleMenuPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
-    if (!open || event.pointerType === "mouse") return;
-    dragStartRef.current = { y: event.clientY, time: performance.now() };
+    if (!open || event.pointerType === "mouse" || dragStartRef.current) return;
+    dragStartRef.current = { y: event.clientY, time: performance.now(), pointerId: event.pointerId };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handleMenuPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
     const start = dragStartRef.current;
-    if (!start) return;
+    const navigation = navigationRef.current;
+    if (!start || start.pointerId !== event.pointerId || !navigation) return;
 
     const offset = Math.min(0, event.clientY - start.y);
     if (offset > -4) return;
 
     event.preventDefault();
-    event.currentTarget.classList.add("is-dragging");
-    event.currentTarget.style.setProperty("--menu-drag-y", `${offset}px`);
+    navigation.classList.add("is-dragging");
+    navigation.style.setProperty("--menu-drag-y", `${offset}px`);
   };
 
   const finishMenuDrag = (event: ReactPointerEvent<HTMLElement>, cancelled = false) => {
     const start = dragStartRef.current;
-    if (!start) return;
+    const navigation = navigationRef.current;
+    if (!start || start.pointerId !== event.pointerId || !navigation) return;
 
     const offset = Math.min(0, event.clientY - start.y);
     const elapsed = Math.max(performance.now() - start.time, 1);
     const upwardVelocity = -offset / elapsed;
     const shouldClose = !cancelled && (offset < -72 || (offset < -28 && upwardVelocity > 0.45));
-    const navigation = event.currentTarget;
 
     dragStartRef.current = null;
-    if (navigation.hasPointerCapture(event.pointerId)) {
-      navigation.releasePointerCapture(event.pointerId);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
     }
     navigation.classList.remove("is-dragging");
 
@@ -155,6 +157,10 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       aria-hidden={!open}
       tabIndex={open ? 0 : -1}
       onClick={closeMenu}
+      onPointerDown={handleMenuPointerDown}
+      onPointerMove={handleMenuPointerMove}
+      onPointerUp={handleMenuPointerEnd}
+      onPointerCancel={handleMenuPointerCancel}
     />
     <header className={`site-header ${compact ? "site-header--compact" : ""} ${open ? "site-header--menu-open" : ""}`}>
       <div className="site-header__stripe" />
@@ -181,6 +187,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <span>{open ? (locale === "pt" ? "Fechar" : "Close") : "Menu"}</span>
         </button>
         <nav
+          ref={navigationRef}
           id="main-navigation"
           className={`main-navigation ${open ? "is-open" : ""}`}
           aria-label="Principal"
