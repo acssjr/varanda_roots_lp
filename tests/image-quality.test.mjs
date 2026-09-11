@@ -38,9 +38,10 @@ test("requests high-fidelity internal images at their real responsive widths", a
   assert.match(view, /index === 0[\s\S]*?58vw, 880px/);
 });
 
-test("accounts for the deliberate mobile hero crop when choosing a source", async () => {
+test("balances the deliberate mobile hero crop with the performance image budget", async () => {
   const home = await readFile(join(root, "components/HomePage.tsx"), "utf8");
 
   assert.match(home, /src:\s*mobile[\s\S]*?sizes:\s*"118vw"/);
-  assert.match(home, /quality:\s*88/);
+  assert.match(home, /quality:\s*75/);
+  assert.match(home, /fetchPriority:\s*"high"/);
 });

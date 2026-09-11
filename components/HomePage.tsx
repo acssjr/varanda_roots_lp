@@ -3,13 +3,25 @@
 import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Bike, CarFront, PersonStanding } from "lucide-react";
 import { ActionArrow } from "./ActionArrow";
 import { homeContent, type Locale } from "@/lib/site-content";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+async function importGsap() {
+  const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+    import("gsap"),
+    import("gsap/ScrollTrigger"),
+  ]);
+  gsap.registerPlugin(ScrollTrigger);
+  return gsap;
+}
+
+let gsapPromise: ReturnType<typeof importGsap> | undefined;
+
+function loadGsap() {
+  gsapPromise ??= importGsap();
+  return gsapPromise;
+}
 
 const GOOGLE_MAPS_ROUTE = "https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA";
 const WAZE_ROUTE = "https://ul.waze.com/ul?place=ChIJ52z4fWsDFgcRf1jeybK-zmM&ll=-13.01066800%2C-38.48298000&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location";
@@ -17,7 +29,7 @@ type TravelMode = "walk" | "bike" | "car";
 const TRAVEL_MODES: TravelMode[] = ["walk", "bike", "car"];
 
 function HeroImage({ desktop, mobile, alt, eager }: { desktop: string; mobile: string; alt: string; eager: boolean }) {
-  const common = { alt, quality: 88 } as const;
+  const common = { alt, quality: 75 } as const;
   const loading = eager
     ? { loading: "eager" as const, fetchPriority: "high" as const }
     : { loading: "lazy" as const };
@@ -35,6 +47,7 @@ function HeroImage({ desktop, mobile, alt, eager }: { desktop: string; mobile: s
         {...mobileProps}
         alt={alt}
         srcSet={mobileSrcSet}
+        decoding={eager ? "sync" : "async"}
         className="hero__image"
       />
     </picture>
@@ -121,29 +134,61 @@ function LocationIcon({ type }: { type: string }) {
 }
 
 function TravelModeIcon({ mode }: { mode: TravelMode }) {
-  if (mode === "walk") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="13" cy="4.5" r="2" />
-        <path d="m10.5 9 2.5-1.4 2.2 2.7 2.8 1.2M12.8 8l-1 5-3.2 3M11.8 13l3.1 2.3 1.3 4.2M8.6 16 6 20" />
-      </svg>
-    );
-  }
+  const Icon = mode === "walk" ? PersonStanding : mode === "bike" ? Bike : CarFront;
+  return <Icon aria-hidden="true" focusable="false" strokeWidth={1.8} />;
+}
 
-  if (mode === "bike") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="6" cy="16" r="3.5" /><circle cx="18" cy="16" r="3.5" />
-        <path d="m6 16 4-7 4 7H6Zm4-7h4l4 7M9 6h3" />
-      </svg>
-    );
-  }
+type TravelMetric = { time: string; distance: string };
+
+function TravelMetricRoll({ routes, mode }: { routes: Record<TravelMode, TravelMetric>; mode: TravelMode }) {
+  const root = useRef<HTMLSpanElement>(null);
+  const activeIndex = TRAVEL_MODES.indexOf(mode);
+  const previousIndex = useRef(activeIndex);
+  const metric = routes[mode];
+
+  useEffect(() => {
+    const track = root.current?.querySelector<HTMLElement>(".visit__nearby-metric-track");
+    if (!track) return;
+
+    if (previousIndex.current === activeIndex) {
+      track.style.transform = `translateY(-${activeIndex * (100 / TRAVEL_MODES.length)}%)`;
+      return;
+    }
+
+    previousIndex.current = activeIndex;
+    let cancelled = false;
+    let tween: { kill: () => void } | undefined;
+
+    void loadGsap().then((gsap) => {
+      if (cancelled) return;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      tween = gsap.to(track, {
+        yPercent: -(activeIndex * (100 / TRAVEL_MODES.length)),
+        duration: reduceMotion ? 0 : 0.28,
+        ease: "power3.inOut",
+        overwrite: "auto",
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      tween?.kill();
+    };
+  }, [activeIndex]);
 
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m4 15 1.4-5h13.2l1.4 5v3H4v-3Zm2.2-5 1.5-3h8.6l1.5 3" />
-      <circle cx="7" cy="18" r="1.3" /><circle cx="17" cy="18" r="1.3" />
-    </svg>
+    <span className="visit__nearby-metric-window" ref={root}>
+      <span className="visit__nearby-metric-track" aria-hidden="true">
+        {TRAVEL_MODES.map((travelMode) => (
+          <span className="visit__nearby-metric" key={travelMode}>
+            <strong>{routes[travelMode].time}</strong><em>{routes[travelMode].distance}</em>
+          </span>
+        ))}
+      </span>
+      <span className="visit__nearby-metric-announcement" aria-live="polite" aria-atomic="true">
+        {metric.time} · {metric.distance}
+      </span>
+    </span>
   );
 }
 
@@ -207,144 +252,192 @@ export function HomePage({ locale }: { locale: Locale }) {
     };
   }, [content.slides.length]);
 
-  useGSAP(
-    () => {
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      gsap.utils.toArray<HTMLElement>("[data-reveal]:not(.class-card)").forEach((element) => {
-        gsap.from(element, {
-          y: 54,
-          opacity: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: { trigger: element, start: "top 86%", once: true },
-        });
-      });
+    let cancelled = false;
+    let started = false;
+    let context: { revert: () => void } | undefined;
+    let cardsMedia: {
+      add: (query: string, callback: () => void) => unknown;
+      revert: () => void;
+    } | undefined;
 
-      gsap.fromTo(
-        ".manifest",
-        { clipPath: "inset(100% 0 0 0)" },
-        {
-          clipPath: "inset(0% 0 0 0)",
-          duration: 0.85,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".manifest", start: "top 94%", once: true },
-        },
-      );
+    const removeIntentListeners = () => {
+      window.removeEventListener("wheel", initializeMotion);
+      window.removeEventListener("touchstart", initializeMotion);
+      window.removeEventListener("keydown", initializeMotion);
+      window.removeEventListener("scroll", initializeMotion);
+    };
 
-      gsap.fromTo(
-        ".manifest__grid > *",
-        { yPercent: 8, opacity: 0 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.07,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".manifest", start: "top 90%", once: true },
-        },
-      );
+    const initializeMotion = () => {
+      if (started) return;
+      started = true;
+      removeIntentListeners();
+      void loadGsap().then((gsap) => {
+        if (cancelled) return;
 
-      gsap.fromTo(
-        ".manifest__highlight",
-        { "--highlight-progress": "0%" },
-        {
-          "--highlight-progress": "100%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".manifest",
-            start: "top 74%",
-            end: "center 46%",
-            scrub: 0.55,
-          },
-        },
-      );
+        context = gsap.context(() => {
+          gsap.utils.toArray<HTMLElement>("[data-reveal]:not(.class-card)").forEach((element) => {
+            gsap.from(element, {
+              y: 54,
+              opacity: 0,
+              duration: 0.9,
+              ease: "power3.out",
+              scrollTrigger: { trigger: element, start: "top 86%", once: true },
+            });
+          });
 
-      const cardsMedia = gsap.matchMedia();
-
-      cardsMedia.add("(min-width: 761px)", () => {
-        gsap.fromTo(
-          ".class-card",
-          { yPercent: 8, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.65,
-            stagger: 0.07,
-            ease: "power3.out",
-            scrollTrigger: { trigger: ".class-grid", start: "top 88%", once: true },
-          },
-        );
-      });
-
-      cardsMedia.add("(max-width: 760px)", () => {
-        const cards = gsap.utils.toArray<HTMLElement>(".class-card");
-        gsap.set(cards[0], { yPercent: 0, rotateX: 0, scale: 1 });
-
-        cards.slice(1).forEach((card) => {
           gsap.fromTo(
-            card,
-            { yPercent: 18, rotateX: -6, scale: 0.96 },
+            ".manifest",
+            { clipPath: "inset(100% 0 0 0)" },
+            {
+              clipPath: "inset(0% 0 0 0)",
+              duration: 0.85,
+              ease: "power3.out",
+              scrollTrigger: { trigger: ".manifest", start: "top 94%", once: true },
+            },
+          );
+
+          gsap.fromTo(
+            ".manifest__grid > *",
+            { yPercent: 8, opacity: 0 },
             {
               yPercent: 0,
-              rotateX: 0,
-              scale: 1,
+              opacity: 1,
+              duration: 0.8,
+              stagger: 0.07,
+              ease: "power3.out",
+              scrollTrigger: { trigger: ".manifest", start: "top 90%", once: true },
+            },
+          );
+
+          gsap.fromTo(
+            ".manifest__highlight",
+            { "--highlight-progress": "0%" },
+            {
+              "--highlight-progress": "100%",
               ease: "none",
               scrollTrigger: {
-                trigger: card,
-                start: "top 100%",
-                end: "top 62%",
-                scrub: 0.8,
+                trigger: ".manifest",
+                start: "top 74%",
+                end: "center 46%",
+                scrub: 0.55,
               },
             },
           );
-        });
+
+          cardsMedia = gsap.matchMedia();
+
+          cardsMedia.add("(min-width: 761px)", () => {
+            gsap.fromTo(
+              ".class-card",
+              { yPercent: 8, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.65,
+                stagger: 0.07,
+                ease: "power3.out",
+                scrollTrigger: { trigger: ".class-grid", start: "top 88%", once: true },
+              },
+            );
+          });
+
+          cardsMedia.add("(max-width: 760px)", () => {
+            const cards = gsap.utils.toArray<HTMLElement>(".class-card");
+            gsap.set(cards[0], { yPercent: 0, rotateX: 0, scale: 1 });
+
+            cards.slice(1).forEach((card) => {
+              gsap.fromTo(
+                card,
+                { yPercent: 18, rotateX: -6, scale: 0.96 },
+                {
+                  yPercent: 0,
+                  rotateX: 0,
+                  scale: 1,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: card,
+                    start: "top 100%",
+                    end: "top 62%",
+                    scrub: 0.8,
+                  },
+                },
+              );
+            });
+          });
+
+          gsap.from(".duo__image-wrap", {
+            scale: 0.96,
+            opacity: 0.4,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".duo",
+              start: "top 78%",
+              once: true,
+            },
+          });
+        }, main);
       });
+    };
 
-      gsap.from(".duo__image-wrap", {
-        scale: 0.96,
-        opacity: 0.4,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".duo",
-          start: "top 78%",
-          once: true,
-        },
-      });
+    window.addEventListener("wheel", initializeMotion, { passive: true, once: true });
+    window.addEventListener("touchstart", initializeMotion, { passive: true, once: true });
+    window.addEventListener("keydown", initializeMotion, { once: true });
+    window.addEventListener("scroll", initializeMotion, { passive: true, once: true });
 
-      return () => cardsMedia.revert();
-    },
-    { scope: mainRef },
-  );
+    return () => {
+      cancelled = true;
+      removeIntentListeners();
+      cardsMedia?.revert();
+      context?.revert();
+    };
+  }, []);
 
-  useGSAP(
-    () => {
-      if (!slidesRef.current) return;
-      const slides = gsap.utils.toArray<HTMLElement>(".hero__slide", slidesRef.current);
-      const activeElement = slides[activeSlide];
-      const inactiveElements = slides.filter((_, index) => index !== activeSlide);
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const previousSlide = useRef(activeSlide);
 
-      gsap.set(activeElement, { zIndex: 2 });
-      gsap.set(inactiveElements, { zIndex: 1 });
+  useEffect(() => {
+    const slidesRoot = slidesRef.current;
+    if (!slidesRoot || previousSlide.current === activeSlide) return;
+    previousSlide.current = activeSlide;
 
-      if (reduceMotion) {
-        gsap.set(inactiveElements, { autoAlpha: 0, scale: 1 });
-        gsap.set(activeElement, { autoAlpha: 1, scale: 1 });
-        gsap.set(".hero__copy", { autoAlpha: 1, y: 0 });
-        return;
-      }
+    let cancelled = false;
+    let context: { revert: () => void } | undefined;
 
-      const timeline = gsap.timeline();
-      timeline
-        .to(inactiveElements, { autoAlpha: 0, scale: 1.01, duration: 0.7, ease: "power2.out", overwrite: true }, 0)
-        .fromTo(activeElement, { autoAlpha: 0, scale: 1.025 }, { autoAlpha: 1, scale: 1, duration: 0.82, ease: "power2.out", overwrite: true }, 0)
-        .fromTo(".hero__copy", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", overwrite: true }, 0.16);
-    },
-    { scope: mainRef, dependencies: [activeSlide] },
-  );
+    void loadGsap().then((gsap) => {
+      if (cancelled) return;
+      context = gsap.context(() => {
+        const slides = gsap.utils.toArray<HTMLElement>(".hero__slide", slidesRoot);
+        const activeElement = slides[activeSlide];
+        const inactiveElements = slides.filter((_, index) => index !== activeSlide);
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        gsap.set(activeElement, { zIndex: 2 });
+        gsap.set(inactiveElements, { zIndex: 1 });
+
+        if (reduceMotion) {
+          gsap.set(inactiveElements, { autoAlpha: 0, scale: 1 });
+          gsap.set(activeElement, { autoAlpha: 1, scale: 1 });
+          gsap.set(".hero__copy", { autoAlpha: 1, y: 0 });
+          return;
+        }
+
+        const timeline = gsap.timeline();
+        timeline
+          .to(inactiveElements, { autoAlpha: 0, scale: 1.01, duration: 0.7, ease: "power2.out", overwrite: true }, 0)
+          .fromTo(activeElement, { autoAlpha: 0, scale: 1.025 }, { autoAlpha: 1, scale: 1, duration: 0.82, ease: "power2.out", overwrite: true }, 0)
+          .fromTo(".hero__copy", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", overwrite: true }, 0.16);
+      }, mainRef.current ?? slidesRoot);
+    });
+
+    return () => {
+      cancelled = true;
+      context?.revert();
+    };
+  }, [activeSlide]);
 
   const active = content.slides[activeSlide];
   const manifestHighlight = locale === "pt" ? "Forró Roots em Salvador." : "Forró Roots in Salvador.";
@@ -510,6 +603,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                   onClick={() => setTravelMode(mode)}
                 >
                   <TravelModeIcon mode={mode} />
+                  <span className="visit__mode-label">{content.visitTravelModes[mode]}</span>
                 </button>
               ))}
             </div>
@@ -517,17 +611,8 @@ export function HomePage({ locale }: { locale: Locale }) {
               {content.visitNearby.map((item) => (
                 <div className="visit__nearby-item" key={item.place}>
                   <span className="visit__nearby-icon"><LocationIcon type={item.icon} /></span>
-                  <span className="visit__nearby-metrics" aria-live="polite">
-                    {TRAVEL_MODES.map((mode) => (
-                      <span
-                        className={`visit__nearby-metric ${travelMode === mode ? "is-active" : ""}`}
-                        aria-hidden={travelMode !== mode}
-                        key={mode}
-                      >
-                        <strong>{item.routes[mode].time}</strong>
-                        <em>{item.routes[mode].distance}</em>
-                      </span>
-                    ))}
+                  <span className="visit__nearby-metrics">
+                    <TravelMetricRoll routes={item.routes} mode={travelMode} />
                     <small>{item.place}</small>
                   </span>
                 </div>
