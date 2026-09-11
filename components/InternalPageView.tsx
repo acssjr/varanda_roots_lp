@@ -118,6 +118,17 @@ function RichInternalPageView({ locale, page }: { locale: Locale; page: RichInte
   }, []);
 
   const profile = page.profiles?.[activeProfile];
+  const contactSignals = locale === "pt"
+    ? [
+        { label: "Aulas", image: "/images/instagram/optimized/generated/cards/comecar-aula-editorial.webp" },
+        { label: "Eventos", image: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_9.webp" },
+        { label: "Workshops", image: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_2.webp" },
+      ]
+    : [
+        { label: "Classes", image: "/images/instagram/optimized/generated/cards/comecar-aula-editorial.webp" },
+        { label: "Events", image: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_9.webp" },
+        { label: "Workshops", image: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_2.webp" },
+      ];
 
   return (
     <main ref={root} className={`rich-page rich-page--${page.theme}`}>
@@ -138,7 +149,12 @@ function RichInternalPageView({ locale, page }: { locale: Locale; page: RichInte
             </div>
           ) : (
             <div className="rich-hero__signal" aria-hidden="true">
-              {(locale === "pt" ? ["Aulas", "Eventos", "Curso"] : ["Classes", "Events", "Course"]).map((word) => <span key={word}>{word}</span>)}
+              {contactSignals.map((signal) => (
+                <div className="contact-signal__item" key={signal.label}>
+                  <Image src={signal.image} alt="" fill quality={82} sizes="(max-width: 760px) calc(100vw - 36px), 44vw" />
+                  <span>{signal.label}</span>
+                </div>
+              ))}
             </div>
           )}
         </div>

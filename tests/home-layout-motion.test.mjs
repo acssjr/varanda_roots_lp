@@ -25,7 +25,7 @@ test("aligns manifest and class introductions to one left edge", async () => {
   assert.match(styles, /\.section-heading--split\s*\{[^}]*display:\s*grid/s);
 });
 
-test("reveals the yellow section and class cards once from below", async () => {
+test("reveals the yellow section and stacks class cards on mobile", async () => {
   const home = await readFile(homePath, "utf8");
 
   assert.match(home, /trigger:\s*"\.manifest"/);
@@ -34,13 +34,15 @@ test("reveals the yellow section and class cards once from below", async () => {
   assert.match(home, /trigger:\s*"\.class-grid"/);
   assert.match(home, /stagger:\s*0?\.07/);
   assert.match(home, /once:\s*true/);
+  assert.match(home, /rotateX:\s*-6/);
+  assert.match(home, /start:\s*"top 100%"/);
+  assert.match(home, /scrub:\s*0\.8/);
 });
 
-test("places the mobile class action in the upper-right corner", async () => {
-  const styles = await readFile(stylesPath, "utf8");
+test("removes false class-card actions and uses a sticky mobile stack", async () => {
+  const [home, styles] = await Promise.all([readFile(homePath, "utf8"), readFile(stylesPath, "utf8")]);
 
-  assert.match(
-    styles,
-    /@media \(max-width:\s*760px\)[\s\S]*?\.class-card__footer i\s*\{[^}]*position:\s*absolute[^}]*top:\s*24px[^}]*right:\s*24px/s,
-  );
+  assert.doesNotMatch(home, /className="class-card__footer"><p>\{body\}<\/p><ActionArrow/);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.classes\s*\{[^}]*overflow:\s*visible/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.class-card\s*\{[^}]*position:\s*sticky[^}]*margin-bottom:\s*14px[^}]*transform-style:\s*preserve-3d/s);
 });

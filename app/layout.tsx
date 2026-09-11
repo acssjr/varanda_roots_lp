@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageScrollFade } from "@/components/PageScrollFade";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

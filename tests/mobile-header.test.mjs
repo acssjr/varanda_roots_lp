@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const headerPath = new URL("../components/SiteHeader.tsx", import.meta.url);
+const brandPath = new URL("../components/BrandMark.tsx", import.meta.url);
 const stylesPath = new URL("../app/globals.css", import.meta.url);
 
 test("turns the mobile menu into a dismissible non-scrolling sheet", async () => {
@@ -20,26 +21,35 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
 });
 
-test("collapses the mobile wordmark only while the header is compact", async () => {
-  const styles = await readFile(stylesPath, "utf8");
+test("reconstructs the wordmark from left to right on desktop and mobile without moving the brand", async () => {
+  const [header, brand, styles] = await Promise.all([
+    readFile(headerPath, "utf8"),
+    readFile(brandPath, "utf8"),
+    readFile(stylesPath, "utf8"),
+  ]);
 
   assert.match(
     styles,
-    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*clip-path:\s*inset\(0 100% 0 0\)/s,
+    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*width:\s*0/s,
+  );
+  assert.match(
+    styles,
+    /\.site-header--menu-open\s+\.brand__official-name\s*\{[^}]*width:\s*var\(--brand-name-width\)/s,
   );
 
   assert.match(
     styles,
-    /\.brand__official-name\s*\{[^}]*clip-path:\s*inset\(0 0 0 0\)[^}]*transition:[^}]*clip-path\s+\.7s\s+var\(--ease-in-out\)/s,
+    /\.brand__official-name\s*\{[^}]*overflow:\s*hidden[^}]*contain:\s*layout paint[^}]*transition:\s*width\s+\.62s\s+var\(--ease-in-out\)/s,
   );
-  assert.match(
-    styles,
-    /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand__official-name\s*\{[^}]*opacity:\s*1[^}]*transform:\s*none/s,
-  );
+  assert.match(styles, /\.brand__official-name-shape\s*\{[^}]*position:\s*absolute[^}]*left:\s*0[^}]*width:\s*var\(--brand-name-width\)[^}]*translateZ\(0\)/s);
   assert.doesNotMatch(
     styles,
     /\.site-header--compact:not\(\.site-header--menu-open\)\s+\.brand\s*\{[^}]*(?:width:\s*49px|gap:\s*0)/s,
   );
+  assert.doesNotMatch(styles, /(?:^|\n)\.brand--compact\s*\{[^}]*(?:width|height):/s);
+  assert.doesNotMatch(styles, /(?:^|\n)\.site-header--compact\s+\.brand__official-icon\s*\{[^}]*width:/s);
+  assert.match(brand, /className="brand__official-name-shape"/);
+  assert.match(header, /compactRef\.current\s*\?\s*window\.scrollY\s*>\s*72\s*:\s*window\.scrollY\s*>\s*128/);
 });
 
 test("keeps the mobile brand and menu toggle on the same stable center line", async () => {
@@ -57,6 +67,7 @@ test("keeps the mobile brand and menu toggle on the same stable center line", as
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header__main[^}]*min-height:\s*82px/s);
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header--compact \.site-header__main\s*\{[^}]*min-height:\s*69px/s);
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header\s*\{[^}]*transition:[^}]*background\s+\.65s\s+var\(--ease-in-out\)/s);
+  assert.match(styles, /\.menu-toggle:focus-visible\s*\{[^}]*outline:\s*none[^}]*box-shadow:\s*none/s);
 });
 
 test("makes the brand return home or scroll the current home page to the top", async () => {

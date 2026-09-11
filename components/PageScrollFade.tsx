@@ -1,6 +1,9 @@
 "use client";
 
+import Lenis from "lenis";
 import { useEffect, useRef } from "react";
+
+const blurLayers = Array.from({ length: 8 }, (_, index) => index + 1);
 
 export function PageScrollFade() {
   const root = useRef<HTMLDivElement>(null);
@@ -10,14 +13,30 @@ export function PageScrollFade() {
     if (!element) return;
 
     let frame = 0;
+    let hideThumbTimer = 0;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const lenis = new Lenis({
+      anchors: true,
+      autoRaf: true,
+      duration: 1.15,
+      smoothWheel: !reducedMotion.matches,
+      stopInertiaOnNavigate: true,
+      syncTouch: false,
+      wheelMultiplier: 0.82,
+    });
+
     const update = () => {
       const scrollRange = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
       const remaining = Math.max(scrollRange - window.scrollY, 0);
-      const headerHeight = document.querySelector<HTMLElement>(".site-header")?.getBoundingClientRect().height ?? 0;
+      const viewportHeight = window.innerHeight;
+      const documentHeight = Math.max(document.documentElement.scrollHeight, viewportHeight);
+      const thumbHeight = Math.max(38, (viewportHeight / documentHeight) * viewportHeight);
+      const thumbTravel = Math.max(viewportHeight - thumbHeight, 0);
+      const scrollProgress = scrollRange > 0 ? Math.min(Math.max(window.scrollY / scrollRange, 0), 1) : 0;
 
-      element.style.setProperty("--page-fade-top", String(Math.min(window.scrollY / 96, 1)));
       element.style.setProperty("--page-fade-bottom", String(Math.min(remaining / 96, 1)));
-      element.style.setProperty("--page-fade-header", `${Math.round(headerHeight)}px`);
+      element.style.setProperty("--mobile-scroll-thumb-height", `${Math.round(thumbHeight)}px`);
+      element.style.setProperty("--mobile-scroll-thumb-y", `${Math.round(thumbTravel * scrollProgress)}px`);
       frame = 0;
     };
 
@@ -25,20 +44,33 @@ export function PageScrollFade() {
       if (!frame) frame = window.requestAnimationFrame(update);
     };
 
+    const showScrollThumb = () => {
+      element.classList.add("is-scrolling");
+      window.clearTimeout(hideThumbTimer);
+      hideThumbTimer = window.setTimeout(() => element.classList.remove("is-scrolling"), 720);
+      scheduleUpdate();
+    };
+
     update();
-    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("scroll", showScrollThumb, { passive: true });
     window.addEventListener("resize", scheduleUpdate, { passive: true });
     return () => {
-      window.removeEventListener("scroll", scheduleUpdate);
+      lenis.destroy();
+      window.removeEventListener("scroll", showScrollThumb);
       window.removeEventListener("resize", scheduleUpdate);
+      window.clearTimeout(hideThumbTimer);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
     <div className="page-scroll-fade" ref={root} aria-hidden="true">
-      <span className="page-scroll-fade__edge page-scroll-fade__edge--top" />
-      <span className="page-scroll-fade__edge page-scroll-fade__edge--bottom" />
+      <div className="page-scroll-fade__edge page-scroll-fade__edge--bottom">
+        {blurLayers.map((layer) => (
+          <span className={`page-scroll-fade__blur page-scroll-fade__blur--${layer}`} key={layer} />
+        ))}
+      </div>
+      <span className="page-scroll-fade__mobile-thumb" />
     </div>
   );
 }

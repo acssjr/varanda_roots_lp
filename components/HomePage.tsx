@@ -73,19 +73,25 @@ export function HomePage({ locale }: { locale: Locale }) {
     if (reduceMotion) return;
 
     let timer: number | undefined;
+    let isFirstCycle = true;
+
+    const advance = () => {
+      setActiveSlide((current) => (current + 1) % content.slides.length);
+      isFirstCycle = false;
+      timer = window.setTimeout(advance, 6500);
+    };
+
     const start = () => {
-      window.clearInterval(timer);
+      window.clearTimeout(timer);
       if (document.visibilityState === "visible") {
-        timer = window.setInterval(() => {
-          setActiveSlide((current) => (current + 1) % content.slides.length);
-        }, 6500);
+        timer = window.setTimeout(advance, isFirstCycle ? 10000 : 6500);
       }
     };
 
     start();
     document.addEventListener("visibilitychange", start);
     return () => {
-      window.clearInterval(timer);
+      window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", start);
     };
   }, [content.slides.length]);
@@ -130,17 +136,60 @@ export function HomePage({ locale }: { locale: Locale }) {
       );
 
       gsap.fromTo(
-        ".class-card",
-        { yPercent: 8, opacity: 0 },
+        ".manifest__highlight",
+        { "--highlight-progress": "0%" },
         {
-          yPercent: 0,
-          opacity: 1,
-          duration: 0.65,
-          stagger: 0.07,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".class-grid", start: "top 88%", once: true },
+          "--highlight-progress": "100%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".manifest",
+            start: "top 74%",
+            end: "center 46%",
+            scrub: 0.55,
+          },
         },
       );
+
+      const cardsMedia = gsap.matchMedia();
+
+      cardsMedia.add("(min-width: 761px)", () => {
+        gsap.fromTo(
+          ".class-card",
+          { yPercent: 8, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.65,
+            stagger: 0.07,
+            ease: "power3.out",
+            scrollTrigger: { trigger: ".class-grid", start: "top 88%", once: true },
+          },
+        );
+      });
+
+      cardsMedia.add("(max-width: 760px)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(".class-card");
+        gsap.set(cards[0], { yPercent: 0, rotateX: 0, scale: 1 });
+
+        cards.slice(1).forEach((card) => {
+          gsap.fromTo(
+            card,
+            { yPercent: 18, rotateX: -6, scale: 0.96 },
+            {
+              yPercent: 0,
+              rotateX: 0,
+              scale: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 100%",
+                end: "top 62%",
+                scrub: 0.8,
+              },
+            },
+          );
+        });
+      });
 
       gsap.from(".duo__image-wrap", {
         scale: 0.96,
@@ -153,6 +202,8 @@ export function HomePage({ locale }: { locale: Locale }) {
           once: true,
         },
       });
+
+      return () => cardsMedia.revert();
     },
     { scope: mainRef },
   );
@@ -185,6 +236,8 @@ export function HomePage({ locale }: { locale: Locale }) {
   );
 
   const active = content.slides[activeSlide];
+  const manifestHighlight = locale === "pt" ? "Forró Roots em Salvador." : "Forró Roots in Salvador.";
+  const manifestLead = content.manifest.slice(0, -manifestHighlight.length).trimEnd();
 
   return (
     <main ref={mainRef}>
@@ -224,7 +277,10 @@ export function HomePage({ locale }: { locale: Locale }) {
       <section className="manifest chapter chapter--yellow">
         <div className="page-shell manifest__grid">
           <span className="eyebrow">{content.manifestKicker}</span>
-          <h2>{content.manifest}</h2>
+          <h2>
+            {manifestLead}
+            <span className="manifest__highlight-row"><span className="manifest__highlight">{manifestHighlight}</span></span>
+          </h2>
           <p>{content.manifestBody}</p>
         </div>
       </section>
@@ -244,7 +300,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 </div>
                 <div className="class-card__body">
                   <span>0{index + 1}</span><h3>{title}</h3>
-                  <div className="class-card__footer"><p>{body}</p><ActionArrow /></div>
+                  <div className="class-card__footer"><p>{body}</p></div>
                 </div>
               </article>
             ))}
@@ -291,6 +347,7 @@ export function HomePage({ locale }: { locale: Locale }) {
 
       <section className="duo chapter chapter--dark">
         <div className="page-shell duo__grid">
+          <span className="eyebrow eyebrow--yellow duo__mobile-kicker" data-reveal>{content.duoKicker}</span>
           <div className="duo__image-wrap">
             <Image src="/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp" alt="" fill sizes="(max-width: 800px) calc(100vw - 32px), 50vw" />
           </div>

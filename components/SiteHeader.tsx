@@ -45,7 +45,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   useEffect(() => {
     let ticking = false;
     const update = () => {
-      const nextCompact = compactRef.current ? window.scrollY > 24 : window.scrollY > 150;
+      const nextCompact = compactRef.current ? window.scrollY > 72 : window.scrollY > 128;
       if (nextCompact !== compactRef.current) {
         compactRef.current = nextCompact;
         setCompact(nextCompact);

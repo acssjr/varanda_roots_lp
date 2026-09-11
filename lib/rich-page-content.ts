@@ -146,7 +146,7 @@ const pt = {
     ],
     closingTitle: "Fale direto com a Varanda.",
     closingBody: "O mesmo número recebe ligações e mensagens no WhatsApp. A escola fica na Rua Deputado Cunha Bueno, 55, no Rio Vermelho.",
-    closingAction: { label: "Abrir WhatsApp", href: whatsapp("Olá! Vim pelo site da Varanda Roots e gostaria de conversar com a equipe."), external: true },
+    closingAction: { label: "WhatsApp", href: whatsapp("Olá! Vim pelo site da Varanda Roots e gostaria de conversar com a equipe."), external: true },
   },
 } satisfies Record<string, RichInternalPage>;
 
@@ -241,7 +241,7 @@ const en = {
     ],
     closingTitle: "Talk directly to Varanda.",
     closingBody: "The same number receives calls and WhatsApp messages. The school is at Rua Deputado Cunha Bueno, 55, Rio Vermelho, Salvador.",
-    closingAction: { label: "Open WhatsApp", href: whatsapp("Hello! I found Varanda Roots through the website and would like to talk to the team."), external: true },
+    closingAction: { label: "WhatsApp", href: whatsapp("Hello! I found Varanda Roots through the website and would like to talk to the team."), external: true },
   },
 } satisfies Record<string, RichInternalPage>;
 
