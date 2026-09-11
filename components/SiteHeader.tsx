@@ -40,7 +40,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
   const compactRef = useRef(false);
-  const dragStartRef = useRef<{ y: number; time: number } | null>(null);
+  const navigationRef = useRef<HTMLElement | null>(null);
+  const dragStartRef = useRef<{ y: number; time: number; pointerId: number } | null>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -66,16 +67,23 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   useEffect(() => {
     if (!open) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("is-scroll-locked");
+    window.dispatchEvent(new CustomEvent("varanda:scroll-lock", { detail: { locked: true } }));
+
+    const preventViewportScroll = (event: Event) => event.preventDefault();
 
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
 
+    window.addEventListener("wheel", preventViewportScroll, { passive: false });
+    window.addEventListener("touchmove", preventViewportScroll, { passive: false });
     window.addEventListener("keydown", closeOnEscape);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.classList.remove("is-scroll-locked");
+      window.dispatchEvent(new CustomEvent("varanda:scroll-lock", { detail: { locked: false } }));
+      window.removeEventListener("wheel", preventViewportScroll);
+      window.removeEventListener("touchmove", preventViewportScroll);
       window.removeEventListener("keydown", closeOnEscape);
     };
   }, [open]);
@@ -98,47 +106,48 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   };
 
   const handleMenuPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
-    if (!open || event.pointerType === "mouse") return;
-    dragStartRef.current = { y: event.clientY, time: performance.now() };
+    if (!open || dragStartRef.current) return;
+    dragStartRef.current = { y: event.clientY, time: performance.now(), pointerId: event.pointerId };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handleMenuPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
     const start = dragStartRef.current;
-    if (!start) return;
+    const navigation = navigationRef.current;
+    if (!start || start.pointerId !== event.pointerId || !navigation) return;
 
     const offset = Math.min(0, event.clientY - start.y);
     if (offset > -4) return;
 
     event.preventDefault();
-    event.currentTarget.classList.add("is-dragging");
-    event.currentTarget.style.setProperty("--menu-drag-y", `${offset}px`);
+    navigation.classList.add("is-dragging");
+    navigation.style.setProperty("--menu-drag-clip", `${-offset}px`);
   };
 
   const finishMenuDrag = (event: ReactPointerEvent<HTMLElement>, cancelled = false) => {
     const start = dragStartRef.current;
-    if (!start) return;
+    const navigation = navigationRef.current;
+    if (!start || start.pointerId !== event.pointerId || !navigation) return;
 
     const offset = Math.min(0, event.clientY - start.y);
     const elapsed = Math.max(performance.now() - start.time, 1);
     const upwardVelocity = -offset / elapsed;
     const shouldClose = !cancelled && (offset < -72 || (offset < -28 && upwardVelocity > 0.45));
-    const navigation = event.currentTarget;
 
     dragStartRef.current = null;
-    if (navigation.hasPointerCapture(event.pointerId)) {
-      navigation.releasePointerCapture(event.pointerId);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
     }
     navigation.classList.remove("is-dragging");
 
     if (shouldClose) {
       closeMenu();
-      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 360);
+      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-clip"), 520);
       return;
     }
 
-    navigation.style.setProperty("--menu-drag-y", "0px");
-    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 360);
+    navigation.style.setProperty("--menu-drag-clip", "0px");
+    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-clip"), 520);
   };
 
   const handleMenuPointerEnd = (event: ReactPointerEvent<HTMLElement>) => finishMenuDrag(event);
@@ -155,6 +164,10 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       aria-hidden={!open}
       tabIndex={open ? 0 : -1}
       onClick={closeMenu}
+      onPointerDown={handleMenuPointerDown}
+      onPointerMove={handleMenuPointerMove}
+      onPointerUp={handleMenuPointerEnd}
+      onPointerCancel={handleMenuPointerCancel}
     />
     <header className={`site-header ${compact ? "site-header--compact" : ""} ${open ? "site-header--menu-open" : ""}`}>
       <div className="site-header__stripe" />
@@ -180,30 +193,33 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <span className="menu-toggle__icon" aria-hidden="true"><i /><i /></span>
           <span>{open ? (locale === "pt" ? "Fechar" : "Close") : "Menu"}</span>
         </button>
-        <nav
-          id="main-navigation"
-          className={`main-navigation ${open ? "is-open" : ""}`}
-          aria-label="Principal"
-          onPointerDown={handleMenuPointerDown}
-          onPointerMove={handleMenuPointerMove}
-          onPointerUp={handleMenuPointerEnd}
-          onPointerCancel={handleMenuPointerCancel}
-        >
-          {navigation[locale].map((item) => {
-            const href = `/${locale}${item.href}`;
-            const active = pathname === href;
-            return (
-              <Link key={item.href} href={href} onClick={() => setOpen(false)} className={active ? "is-active" : ""}>
-                {item.label}
-              </Link>
-            );
-          })}
-          <Link className="main-navigation__language" href={alternateHref} onClick={() => setOpen(false)}>
-            <FlagIcon country={locale === "pt" ? "gb" : "br"} />
-            {locale === "pt" ? "English" : "Português"}
-          </Link>
-          <span className="main-navigation__mark" aria-hidden="true" />
-        </nav>
+        <div className="main-navigation-viewport">
+          <nav
+            ref={navigationRef}
+            id="main-navigation"
+            className={`main-navigation ${open ? "is-open" : ""}`}
+            aria-label="Principal"
+            onPointerDown={handleMenuPointerDown}
+            onPointerMove={handleMenuPointerMove}
+            onPointerUp={handleMenuPointerEnd}
+            onPointerCancel={handleMenuPointerCancel}
+          >
+            {navigation[locale].map((item) => {
+              const href = `/${locale}${item.href}`;
+              const active = pathname === href;
+              return (
+                <Link key={item.href} href={href} onClick={() => setOpen(false)} className={active ? "is-active" : ""}>
+                  {item.label}
+                </Link>
+              );
+            })}
+            <Link className="main-navigation__language" href={alternateHref} onClick={() => setOpen(false)}>
+              <FlagIcon country={locale === "pt" ? "gb" : "br"} />
+              {locale === "pt" ? "English" : "Português"}
+            </Link>
+            <span className="main-navigation__mark" aria-hidden="true" />
+          </nav>
+        </div>
       </div>
     </header>
     </>

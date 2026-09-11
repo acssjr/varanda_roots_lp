@@ -16,9 +16,71 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   assert.match(header, /onPointerDown=\{handleMenuPointerDown\}/);
   assert.match(header, /onPointerMove=\{handleMenuPointerMove\}/);
   assert.match(header, /onPointerUp=\{handleMenuPointerEnd\}/);
+  assert.match(header, /ref=\{navigationRef\}/);
+  assert.match(
+    header,
+    /className="main-navigation-viewport"[\s\S]*?<nav[\s\S]*?id="main-navigation"/,
+  );
+  assert.match(
+    header,
+    /className="mobile-menu-backdrop"[\s\S]*?onPointerDown=\{handleMenuPointerDown\}[\s\S]*?onPointerMove=\{handleMenuPointerMove\}[\s\S]*?onPointerUp=\{handleMenuPointerEnd\}[\s\S]*?onPointerCancel=\{handleMenuPointerCancel\}/,
+  );
   assert.match(styles, /\.mobile-menu-backdrop\s*\{/);
   assert.match(styles, /\.main-navigation\s*\{[^}]*overflow:\s*hidden/s);
+  assert.match(styles, /\.site-header\s*\{[^}]*--mobile-header-edge:\s*148px/s);
+  assert.match(
+    styles,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.site-header\s*\{[^}]*--mobile-header-edge:\s*136px[\s\S]*?\.site-header--compact\s*\{[^}]*--mobile-header-edge:\s*75px/s,
+  );
+  assert.match(
+    styles,
+    /@media \(max-width:\s*760px\)[\s\S]*?\.site-header\s*\{[^}]*--mobile-header-edge:\s*88px[\s\S]*?\.site-header--compact\s*\{[^}]*--mobile-header-edge:\s*72px/s,
+  );
+  assert.match(styles, /\.main-navigation-viewport\s*\{\s*display:\s*contents/s);
+  assert.match(
+    styles,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.main-navigation-viewport\s*\{[^}]*top:\s*var\(--mobile-header-edge\)[^}]*overflow:\s*clip/s,
+  );
+  assert.match(
+    styles,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.main-navigation\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*clip-path:\s*inset\(0 0 100% 0\)[^}]*clip-path\s+500ms\s+var\(--ease-in-out\)/s,
+  );
+  assert.match(
+    styles,
+    /\.main-navigation\.is-open\s*\{[^}]*clip-path:\s*inset\(0 0 var\(--menu-drag-clip,\s*0px\) 0\)/s,
+  );
+  assert.match(header, /setProperty\("--menu-drag-clip",\s*`\$\{-offset\}px`\)/);
+  assert.doesNotMatch(header, /event\.pointerType\s*===\s*"mouse"/);
+  assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*translate3d\(0,\s*-100%/s);
+  assert.match(styles, /\.mobile-menu-backdrop\s*\{[^}]*opacity\s+500ms\s+var\(--ease-out\)[^}]*visibility\s+0s\s+linear\s+500ms/s);
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
+  assert.match(header, /document\.documentElement\.classList\.add\("is-scroll-locked"\)/);
+  assert.match(header, /document\.documentElement\.classList\.remove\("is-scroll-locked"\)/);
+  assert.match(header, /new CustomEvent\("varanda:scroll-lock",\s*\{\s*detail:\s*\{\s*locked:\s*true\s*\}/s);
+  assert.match(header, /new CustomEvent\("varanda:scroll-lock",\s*\{\s*detail:\s*\{\s*locked:\s*false\s*\}/s);
+  assert.match(header, /const preventViewportScroll = \(event: Event\) => event\.preventDefault\(\)/);
+  assert.match(header, /window\.addEventListener\("wheel",\s*preventViewportScroll,\s*\{\s*passive:\s*false\s*\}\)/);
+  assert.match(header, /window\.addEventListener\("touchmove",\s*preventViewportScroll,\s*\{\s*passive:\s*false\s*\}\)/);
+  assert.match(header, /window\.removeEventListener\("wheel",\s*preventViewportScroll\)/);
+  assert.match(header, /window\.removeEventListener\("touchmove",\s*preventViewportScroll\)/);
+  assert.match(styles, /html\.is-scroll-locked,[\s\S]*?html\.is-scroll-locked body\s*\{[^}]*overflow:\s*hidden[^}]*overscroll-behavior:\s*none/s);
+
+  const mobileHeaderStyles = styles.slice(
+    styles.indexOf("@media (max-width: 760px)"),
+    styles.indexOf("@media (prefers-reduced-motion: reduce)", styles.indexOf("@media (max-width: 760px)")),
+  );
+  assert.match(mobileHeaderStyles, /\.site-header--menu-open\s*\{[^}]*background:\s*var\(--blue\)/s);
+});
+
+test("defines a subtle boundary only for light page headers", async () => {
+  const styles = await readFile(stylesPath, "utf8");
+
+  assert.match(styles, /\.site-header::after\s*\{[^}]*width:\s*var\(--shell\)[^}]*opacity:\s*0/s);
+  assert.match(
+    styles,
+    /body:has\(\.rich-page--light\) \.site-header:not\(\.site-header--compact\):not\(\.site-header--menu-open\)::after\s*\{[^}]*opacity:/s,
+  );
+  assert.match(styles, /\.site-header--compact::after[\s\S]*?opacity:\s*0/s);
 });
 
 test("reconstructs the wordmark from left to right on desktop and mobile without moving the brand", async () => {
@@ -66,7 +128,7 @@ test("keeps the mobile brand and menu toggle on the same stable center line", as
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header-spacer\s*\{[^}]*height:\s*88px/s);
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header__main[^}]*min-height:\s*82px/s);
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header--compact \.site-header__main\s*\{[^}]*min-height:\s*69px/s);
-  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header\s*\{[^}]*transition:[^}]*background\s+\.65s\s+var\(--ease-in-out\)/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.site-header\s*\{[^}]*transition:[^}]*background\s+500ms\s+var\(--ease-in-out\)/s);
   assert.match(styles, /\.menu-toggle:focus-visible\s*\{[^}]*outline:\s*none[^}]*box-shadow:\s*none/s);
 });
 
