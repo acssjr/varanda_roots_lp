@@ -99,7 +99,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   };
 
   const handleMenuPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
-    if (!open || event.pointerType === "mouse" || dragStartRef.current) return;
+    if (!open || dragStartRef.current) return;
     dragStartRef.current = { y: event.clientY, time: performance.now(), pointerId: event.pointerId };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -114,7 +114,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
     event.preventDefault();
     navigation.classList.add("is-dragging");
-    navigation.style.setProperty("--menu-drag-y", `${offset}px`);
+    navigation.style.setProperty("--menu-drag-clip", `${-offset}px`);
   };
 
   const finishMenuDrag = (event: ReactPointerEvent<HTMLElement>, cancelled = false) => {
@@ -135,12 +135,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
     if (shouldClose) {
       closeMenu();
-      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 360);
+      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-clip"), 520);
       return;
     }
 
-    navigation.style.setProperty("--menu-drag-y", "0px");
-    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 360);
+    navigation.style.setProperty("--menu-drag-clip", "0px");
+    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-clip"), 520);
   };
 
   const handleMenuPointerEnd = (event: ReactPointerEvent<HTMLElement>) => finishMenuDrag(event);
@@ -186,31 +186,33 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <span className="menu-toggle__icon" aria-hidden="true"><i /><i /></span>
           <span>{open ? (locale === "pt" ? "Fechar" : "Close") : "Menu"}</span>
         </button>
-        <nav
-          ref={navigationRef}
-          id="main-navigation"
-          className={`main-navigation ${open ? "is-open" : ""}`}
-          aria-label="Principal"
-          onPointerDown={handleMenuPointerDown}
-          onPointerMove={handleMenuPointerMove}
-          onPointerUp={handleMenuPointerEnd}
-          onPointerCancel={handleMenuPointerCancel}
-        >
-          {navigation[locale].map((item) => {
-            const href = `/${locale}${item.href}`;
-            const active = pathname === href;
-            return (
-              <Link key={item.href} href={href} onClick={() => setOpen(false)} className={active ? "is-active" : ""}>
-                {item.label}
-              </Link>
-            );
-          })}
-          <Link className="main-navigation__language" href={alternateHref} onClick={() => setOpen(false)}>
-            <FlagIcon country={locale === "pt" ? "gb" : "br"} />
-            {locale === "pt" ? "English" : "Português"}
-          </Link>
-          <span className="main-navigation__mark" aria-hidden="true" />
-        </nav>
+        <div className="main-navigation-viewport">
+          <nav
+            ref={navigationRef}
+            id="main-navigation"
+            className={`main-navigation ${open ? "is-open" : ""}`}
+            aria-label="Principal"
+            onPointerDown={handleMenuPointerDown}
+            onPointerMove={handleMenuPointerMove}
+            onPointerUp={handleMenuPointerEnd}
+            onPointerCancel={handleMenuPointerCancel}
+          >
+            {navigation[locale].map((item) => {
+              const href = `/${locale}${item.href}`;
+              const active = pathname === href;
+              return (
+                <Link key={item.href} href={href} onClick={() => setOpen(false)} className={active ? "is-active" : ""}>
+                  {item.label}
+                </Link>
+              );
+            })}
+            <Link className="main-navigation__language" href={alternateHref} onClick={() => setOpen(false)}>
+              <FlagIcon country={locale === "pt" ? "gb" : "br"} />
+              {locale === "pt" ? "English" : "Português"}
+            </Link>
+            <span className="main-navigation__mark" aria-hidden="true" />
+          </nav>
+        </div>
       </div>
     </header>
     </>

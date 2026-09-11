@@ -4,7 +4,7 @@
 
 **Goal:** Fazer o menu móvel surgir e recolher exclusivamente pela borda inferior do cabeçalho, com movimento e transição de cor mais lentos e sincronizados.
 
-**Architecture:** Um contêiner `.main-navigation-viewport` fica fixo entre a borda inferior do cabeçalho e o fim da viewport e aplica `overflow: clip`. O `<nav>` continua sendo a única superfície transformada e gestual; cabeçalho e backdrop mantêm estados independentes, mas compartilham a duração de 500 ms.
+**Architecture:** Um contêiner `.main-navigation-viewport` fica fixo entre a borda inferior do cabeçalho e o fim da viewport e aplica `overflow: clip`. O `<nav>` continua sendo a única superfície revelada e gestual; cabeçalho e backdrop mantêm estados independentes, mas compartilham a duração de 500 ms.
 
 **Tech Stack:** Next.js 16, React 19, TypeScript, CSS, Node Test Runner.
 
@@ -17,7 +17,7 @@
 - Modify: `components/SiteHeader.tsx`
 - Modify: `app/globals.css`
 
-- [ ] **Step 1: Escrever o teste vermelho**
+- [x] **Step 1: Escrever o teste vermelho**
 
 Adicionar as seguintes expectativas:
 
@@ -26,17 +26,17 @@ assert.match(header, /className="main-navigation-viewport"/);
 assert.match(styles, /\.main-navigation-viewport\s*\{[^}]*overflow:\s*clip/s);
 assert.match(styles, /\.main-navigation-viewport\s*\{[^}]*top:\s*var\(--mobile-header-edge\)/s);
 assert.match(styles, /\.main-navigation\s*\{[^}]*position:\s*absolute[^}]*top:\s*0/s);
-assert.match(styles, /\.main-navigation\s*\{[^}]*500ms\s+var\(--ease-drawer\)/s);
+assert.match(styles, /\.main-navigation\s*\{[^}]*clip-path\s+500ms\s+var\(--ease-in-out\)/s);
 assert.match(styles, /\.mobile-menu-backdrop\s*\{[^}]*500ms\s+var\(--ease-out\)/s);
 ```
 
-- [ ] **Step 2: Confirmar a falha**
+- [x] **Step 2: Confirmar a falha**
 
 Run: `node --test tests/mobile-header.test.mjs`
 
 Expected: `FAIL` porque o wrapper e os novos tempos ainda não existem.
 
-- [ ] **Step 3: Implementar a janela de recorte**
+- [x] **Step 3: Implementar a janela de recorte**
 
 Envolver o `<nav>` em `<div className="main-navigation-viewport">` e aplicar:
 
@@ -46,7 +46,7 @@ Envolver o `<nav>` em `<div className="main-navigation-viewport">` e aplicar:
 @media (max-width: 1080px) {
   .main-navigation-viewport {
     position: fixed;
-    z-index: -1;
+    z-index: 0;
     top: var(--mobile-header-edge);
     right: 0;
     bottom: 0;
@@ -55,12 +55,12 @@ Envolver o `<nav>` em `<div className="main-navigation-viewport">` e aplicar:
     overflow: clip;
     pointer-events: none;
   }
-  .main-navigation-viewport:has(.main-navigation.is-open) { pointer-events: auto; }
-  .main-navigation { position: absolute; top: 0; right: 0; left: 0; }
+  .main-navigation { position: absolute; top: 0; right: 0; left: 0; pointer-events: none; }
+  .main-navigation.is-open { pointer-events: auto; }
 }
 ```
 
-- [ ] **Step 4: Sincronizar o movimento**
+- [x] **Step 4: Sincronizar o movimento**
 
 Aplicar as transições explícitas:
 
@@ -70,17 +70,17 @@ Aplicar as transições explícitas:
 
 @media (max-width: 1080px) {
   .main-navigation {
-    transition: opacity 500ms var(--ease-out), visibility 0s linear 500ms, transform 500ms var(--ease-drawer);
+    transition: opacity 500ms var(--ease-in-out), visibility 0s linear 500ms, clip-path 500ms var(--ease-in-out);
   }
   .main-navigation.is-open { transition-delay: 0s; }
 }
 
 @media (max-width: 760px) {
-  .site-header { transition: color 500ms var(--ease-out), background 500ms var(--ease-out), box-shadow 500ms var(--ease-out); }
+  .site-header { transition: color 500ms var(--ease-in-out), background 500ms var(--ease-in-out), box-shadow 500ms var(--ease-in-out); }
 }
 ```
 
-- [ ] **Step 5: Confirmar o verde**
+- [x] **Step 5: Confirmar o verde**
 
 Run: `node --test tests/mobile-header.test.mjs`
 
@@ -92,15 +92,15 @@ Expected: todos os testes passam.
 - Verify: `components/SiteHeader.tsx`
 - Verify: `app/globals.css`
 
-- [ ] **Step 1: Validar visualmente em 384 × 824**
+- [x] **Step 1: Validar visualmente em 384 × 824**
 
 Confirmar que abertura e fechamento partem da borda inferior da barra, que o menu termina depois de `English`, que a marca não é coberta e que o toque fora fecha.
 
-- [ ] **Step 2: Validar o gesto**
+- [x] **Step 2: Validar o gesto**
 
 Confirmar que um arraste curto retorna o painel e um arraste suficiente fecha, tanto sobre o painel quanto sobre o backdrop.
 
-- [ ] **Step 3: Rodar a verificação completa**
+- [x] **Step 3: Rodar a verificação completa**
 
 Run:
 
@@ -113,7 +113,7 @@ git diff --check
 
 Expected: todos os comandos passam sem erros.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add components/SiteHeader.tsx app/globals.css tests/mobile-header.test.mjs docs/superpowers

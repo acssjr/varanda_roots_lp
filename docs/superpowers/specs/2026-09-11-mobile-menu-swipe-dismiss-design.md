@@ -25,7 +25,7 @@ O cabeçalho e o corpo do menu serão superfícies separadas. Entre eles haverá
 ## Movimento
 
 - O arraste acompanha diretamente o ponteiro, sem animação concorrente.
-- Ao cancelar, o painel retorna com uma curva de gaveta suave.
+- Ao cancelar, o painel retorna com uma curva contínua de entrada e saída.
 - Ao concluir, o painel continua na mesma direção e desaparece atrás do cabeçalho.
 - Painel, fundo escurecido e transição de cor do cabeçalho usam 500 ms sincronizados.
 - Com `prefers-reduced-motion`, o fechamento preserva a mudança de estado, mas elimina o deslocamento prolongado.
@@ -35,7 +35,7 @@ O cabeçalho e o corpo do menu serão superfícies separadas. Entre eles haverá
 - Os manipuladores de ponteiro serão compartilhados pelo painel e pelo fundo externo.
 - Uma referência única apontará para o corpo animado, evitando transformar o elemento que iniciou o gesto.
 - Um contêiner `.main-navigation-viewport` ficará fixo abaixo da altura corrente do cabeçalho e usará `overflow: clip`; ele não será rolável nem animado.
-- O `<nav>` será posicionado dentro dessa janela e animará apenas `transform` e `opacity`.
+- O `<nav>` será posicionado dentro dessa janela e será revelado por `clip-path` e `opacity`, mantendo o topo ancorado na borda inferior do cabeçalho.
 - O ponteiro será capturado no início do arraste para que o gesto continue fora da área original.
 - A decisão de fechar combinará distância e velocidade vertical para cima.
 - O cabeçalho manterá a camada visual superior; a janela e o painel acompanharão a altura corrente do cabeçalho normal ou compacto.
