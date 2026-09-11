@@ -373,9 +373,13 @@ body:has(.rich-page--light) .site-header:not(.site-header--compact):not(.site-he
 .visit__nearby-icon { display: grid; place-items: center; width: 42px; aspect-ratio: 1; color: var(--blue); background: var(--yellow); border-radius: 50%; }
 .visit__nearby-icon svg { width: 23px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
 .visit__nearby-metrics { display: grid; grid-template-areas: "metric" "place"; gap: 2px; min-width: 0; }
-.visit__nearby-metric-window { position: relative; grid-area: metric; display: block; min-width: 142px; height: 1.25rem; overflow: hidden; }
-.visit__nearby-metric-track { display: grid; grid-auto-rows: 1.25rem; will-change: transform; }
-.visit__nearby-metric { display: flex; align-items: baseline; gap: 7px; white-space: nowrap; }
+.visit__nearby-metric-line { position: relative; grid-area: metric; display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.visit__nearby-time-window { display: block; height: 1.25rem; overflow: hidden; }
+.visit__nearby-time-track { display: grid; grid-auto-rows: 1.25rem; will-change: transform; }
+.visit__nearby-time { display: block; white-space: nowrap; }
+.visit__nearby-distance-window { display: block; height: 1.25rem; overflow: hidden; }
+.visit__nearby-distance-track { display: grid; grid-auto-rows: 1.25rem; will-change: transform; }
+.visit__nearby-distance { display: block; white-space: nowrap; }
 .visit__nearby-metric-announcement { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .visit__nearby-item strong { font-size: .96rem; font-weight: 650; }
 .visit__nearby-item em { font-size: .78rem; font-style: normal; opacity: .68; white-space: nowrap; }
@@ -576,7 +580,6 @@ body:has(.rich-page--light) .site-header:not(.site-header--compact):not(.site-he
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .hero__slide, .duo__image-wrap { transform: none !important; }
   .site-header::after { transform: translateX(50%) !important; }
-  .visit__nearby-metric { transform: none !important; }
   .manifest__highlight { --highlight-progress: 100%; }
 }
 

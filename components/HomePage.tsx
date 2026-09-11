@@ -145,45 +145,73 @@ function TravelMetricRoll({ routes, mode }: { routes: Record<TravelMode, TravelM
   const activeIndex = TRAVEL_MODES.indexOf(mode);
   const previousIndex = useRef(activeIndex);
   const metric = routes[mode];
+  const previousDistance = useRef(metric.distance);
 
   useEffect(() => {
-    const track = root.current?.querySelector<HTMLElement>(".visit__nearby-metric-track");
-    if (!track) return;
+    const timeTrack = root.current?.querySelector<HTMLElement>(".visit__nearby-time-track");
+    const distanceTrack = root.current?.querySelector<HTMLElement>(".visit__nearby-distance-track");
+    if (!timeTrack || !distanceTrack) return;
+
+    const targetYPercent = -(activeIndex * (100 / TRAVEL_MODES.length));
 
     if (previousIndex.current === activeIndex) {
-      track.style.transform = `translateY(-${activeIndex * (100 / TRAVEL_MODES.length)}%)`;
+      timeTrack.style.transform = `translateY(${targetYPercent}%)`;
+      distanceTrack.style.transform = `translateY(${targetYPercent}%)`;
       return;
     }
 
+    const distanceChanged = previousDistance.current !== metric.distance;
     previousIndex.current = activeIndex;
+    previousDistance.current = metric.distance;
     let cancelled = false;
-    let tween: { kill: () => void } | undefined;
+    const tweens: Array<{ kill: () => void }> = [];
 
     void loadGsap().then((gsap) => {
       if (cancelled) return;
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      tween = gsap.to(track, {
-        yPercent: -(activeIndex * (100 / TRAVEL_MODES.length)),
-        duration: reduceMotion ? 0 : 0.28,
+      const duration = reduceMotion ? 0 : 0.28;
+      tweens.push(gsap.to(timeTrack, {
+        yPercent: targetYPercent,
+        duration,
         ease: "power3.inOut",
         overwrite: "auto",
-      });
+      }));
+
+      if (distanceChanged) {
+        tweens.push(gsap.to(distanceTrack, {
+          yPercent: targetYPercent,
+          duration,
+          ease: "power3.inOut",
+          overwrite: "auto",
+        }));
+      } else {
+        gsap.set(distanceTrack, { yPercent: targetYPercent });
+      }
     });
 
     return () => {
       cancelled = true;
-      tween?.kill();
+      tweens.forEach((tween) => tween.kill());
     };
-  }, [activeIndex]);
+  }, [activeIndex, metric.distance]);
 
   return (
-    <span className="visit__nearby-metric-window" ref={root}>
-      <span className="visit__nearby-metric-track" aria-hidden="true">
-        {TRAVEL_MODES.map((travelMode) => (
-          <span className="visit__nearby-metric" key={travelMode}>
-            <strong>{routes[travelMode].time}</strong><em>{routes[travelMode].distance}</em>
-          </span>
-        ))}
+    <span className="visit__nearby-metric-line" ref={root}>
+      <span className="visit__nearby-time-window" aria-hidden="true">
+        <span className="visit__nearby-time-track">
+          {TRAVEL_MODES.map((travelMode) => (
+            <span className="visit__nearby-time" key={travelMode}>
+              <strong>{routes[travelMode].time}</strong>
+            </span>
+          ))}
+        </span>
+      </span>
+      <span className="visit__nearby-distance-window" aria-hidden="true">
+        <span className="visit__nearby-distance-track">
+          {TRAVEL_MODES.map((travelMode) => (
+            <em className="visit__nearby-distance" key={travelMode}>{routes[travelMode].distance}</em>
+          ))}
+        </span>
       </span>
       <span className="visit__nearby-metric-announcement" aria-live="polite" aria-atomic="true">
         {metric.time} · {metric.distance}

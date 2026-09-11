@@ -66,11 +66,20 @@ test("switches between fixed walking, cycling and driving references", async () 
   assert.match(styles, /\.visit__mode-label\s*\{/);
   assert.match(homePage, /function TravelMetricRoll/);
   assert.match(homePage, /TRAVEL_MODES\.indexOf\(mode\)/);
-  assert.match(homePage, /gsap\.to\(track/);
-  assert.match(homePage, /yPercent:\s*-\(activeIndex \* \(100 \/ TRAVEL_MODES\.length\)\)/);
+  assert.match(homePage, /gsap\.to\(timeTrack/);
+  assert.match(homePage, /const targetYPercent = -\(activeIndex \* \(100 \/ TRAVEL_MODES\.length\)\)/);
+  assert.match(homePage, /gsap\.to\(timeTrack, \{[\s\S]*?yPercent:\s*targetYPercent/);
+  const timeTrack = homePage.match(/className="visit__nearby-time-track">([\s\S]*?)<\/span>\s*<\/span>/)?.[1] ?? "";
+  assert.match(timeTrack, /routes\[travelMode\]\.time/);
+  assert.match(homePage, /const distanceChanged = previousDistance\.current !== metric\.distance/);
+  assert.match(homePage, /distanceChanged[\s\S]*?gsap\.to\(distanceTrack/);
+  assert.match(homePage, /gsap\.set\(distanceTrack, \{ yPercent: targetYPercent \}\)/);
+  assert.match(homePage, /visit__nearby-distance-track[\s\S]*?routes\[travelMode\]\.distance/);
+  assert.doesNotMatch(timeTrack, /routes\[travelMode\]\.distance/);
   assert.match(homePage, /prefers-reduced-motion:\s*reduce/);
-  assert.match(styles, /\.visit__nearby-metric-window\s*\{[^}]*overflow:\s*hidden/s);
-  assert.match(styles, /\.visit__nearby-metric-track\s*\{[^}]*will-change:\s*transform/s);
+  assert.match(styles, /\.visit__nearby-time-window\s*\{[^}]*overflow:\s*hidden/s);
+  assert.match(styles, /\.visit__nearby-time-track\s*\{[^}]*will-change:\s*transform/s);
+  assert.match(styles, /\.visit__nearby-distance-window\s*\{[^}]*overflow:\s*hidden/s);
 });
 
 test("keeps the enriched location panel responsive", async () => {
