@@ -16,7 +16,7 @@ Restaurar o fechamento do menu móvel por gesto para cima e manter o fechamento 
 
 ## Estados visuais
 
-O cabeçalho e o corpo do menu serão superfícies separadas. O corpo começa abaixo da faixa superior e, ao fechar, recolhe para trás dela usando apenas transformação e opacidade.
+O cabeçalho e o corpo do menu serão superfícies separadas. Entre eles haverá uma janela fixa de recorte que começa exatamente na borda inferior da faixa superior. O corpo se move dentro dessa janela, portanto nunca atravessa nem cobre a marca.
 
 - **Página no topo:** o cabeçalho fica azul enquanto o menu está aberto e transita suavemente para branco depois do fechamento.
 - **Página rolada:** o cabeçalho compacto permanece azul depois do fechamento.
@@ -27,16 +27,18 @@ O cabeçalho e o corpo do menu serão superfícies separadas. O corpo começa ab
 - O arraste acompanha diretamente o ponteiro, sem animação concorrente.
 - Ao cancelar, o painel retorna com uma curva de gaveta suave.
 - Ao concluir, o painel continua na mesma direção e desaparece atrás do cabeçalho.
-- A duração de acomodação fica dentro do intervalo de uma gaveta de interface, sem prolongar a ação.
+- Painel, fundo escurecido e transição de cor do cabeçalho usam 500 ms sincronizados.
 - Com `prefers-reduced-motion`, o fechamento preserva a mudança de estado, mas elimina o deslocamento prolongado.
 
 ## Implementação
 
 - Os manipuladores de ponteiro serão compartilhados pelo painel e pelo fundo externo.
 - Uma referência única apontará para o corpo animado, evitando transformar o elemento que iniciou o gesto.
+- Um contêiner `.main-navigation-viewport` ficará fixo abaixo da altura corrente do cabeçalho e usará `overflow: clip`; ele não será rolável nem animado.
+- O `<nav>` será posicionado dentro dessa janela e animará apenas `transform` e `opacity`.
 - O ponteiro será capturado no início do arraste para que o gesto continue fora da área original.
 - A decisão de fechar combinará distância e velocidade vertical para cima.
-- O cabeçalho manterá a camada visual superior; o painel móvel ficará ancorado abaixo da altura corrente do cabeçalho normal ou compacto.
+- O cabeçalho manterá a camada visual superior; a janela e o painel acompanharão a altura corrente do cabeçalho normal ou compacto.
 - Nenhuma biblioteca nova será adicionada.
 
 ## Validação
