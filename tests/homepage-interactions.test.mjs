@@ -37,7 +37,7 @@ test("reveals the manifest phrase progressively with scroll", async () => {
   assert.match(home, /scrub: 0\.55/);
   assert.match(home, /className="manifest__highlight-row"/);
   assert.match(styles, /\.manifest__highlight-row\s*\{[^}]*display:\s*block[^}]*margin-top:\s*\.12em[^}]*line-height:\s*1/s);
-  assert.match(styles, /\.manifest__highlight\s*\{[^}]*display:\s*inline/s);
+  assert.match(styles, /\.manifest__highlight\s*\{[^}]*display:\s*inline[^}]*padding:\s*\.025em\s+\.16em\s+\.07em\s+\.11em/s);
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.manifest__highlight-row\s*\{[^}]*margin-top:\s*\.18em[^}]*line-height:\s*1\.08/s);
   assert.match(styles, /linear-gradient\(90deg, var\(--blue\) 0 var\(--highlight-progress\), transparent var\(--highlight-progress\) 100%\)/);
 });

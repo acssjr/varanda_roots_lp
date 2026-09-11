@@ -25,6 +25,25 @@ test("aligns manifest and class introductions to one left edge", async () => {
   assert.match(styles, /\.section-heading--split\s*\{[^}]*display:\s*grid/s);
 });
 
+test("keeps compact mobile controls inside 48px touch targets", async () => {
+  const styles = await readFile(stylesPath, "utf8");
+
+  assert.match(styles, /\.hero__dots button\s*\{[^}]*place-items:\s*center[^}]*width:\s*48px[^}]*height:\s*48px/s);
+  assert.match(styles, /\.hero__dots i\s*\{[^}]*width:\s*42px/s);
+  assert.match(styles, /\.visit__mode-button\s*\{[^}]*min-height:\s*48px/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.hero__dots i\s*\{[^}]*width:\s*31px/s);
+});
+
+test("keeps homepage sections compact without removing their breathing room", async () => {
+  const styles = await readFile(stylesPath, "utf8");
+
+  assert.match(styles, /\.classes\s*\{[^}]*padding-block:\s*clamp\(72px,\s*8vw,\s*112px\)/s);
+  assert.match(styles, /\.class-grid\s*\{[^}]*margin-top:\s*clamp\(44px,\s*5vw,\s*72px\)/s);
+  assert.match(styles, /\.agenda\s*\{[^}]*padding-block:\s*clamp\(76px,\s*8vw,\s*120px\)/s);
+  assert.match(styles, /\.duo\s*\{[^}]*padding-block:\s*clamp\(76px,\s*8vw,\s*124px\)/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.classes, \.agenda, \.duo\s*\{[^}]*padding-block:\s*62px/s);
+});
+
 test("reveals the yellow section and stacks class cards on mobile", async () => {
   const home = await readFile(homePath, "utf8");
 

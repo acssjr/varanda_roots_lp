@@ -121,7 +121,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
     event.preventDefault();
     navigation.classList.add("is-dragging");
-    navigation.style.setProperty("--menu-drag-clip", `${-offset}px`);
+    navigation.style.setProperty("--menu-drag-y", `${offset}px`);
   };
 
   const finishMenuDrag = (event: ReactPointerEvent<HTMLElement>, cancelled = false) => {
@@ -142,12 +142,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
     if (shouldClose) {
       closeMenu();
-      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-clip"), 520);
+      window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 680);
       return;
     }
 
-    navigation.style.setProperty("--menu-drag-clip", "0px");
-    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-clip"), 520);
+    navigation.style.setProperty("--menu-drag-y", "0px");
+    window.setTimeout(() => navigation.style.removeProperty("--menu-drag-y"), 680);
   };
 
   const handleMenuPointerEnd = (event: ReactPointerEvent<HTMLElement>) => finishMenuDrag(event);

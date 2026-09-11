@@ -39,25 +39,47 @@ test("shows the neighborhood and three researched walking references", async () 
 });
 
 test("switches between fixed walking, cycling and driving references", async () => {
-  const [homePage, content, styles] = await Promise.all([
+  const [homePage, content, styles, packageJson] = await Promise.all([
     readFile(homePagePath, "utf8"),
     readFile(contentPath, "utf8"),
     readFile(stylesPath, "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
   assert.match(homePage, /const \[travelMode, setTravelMode\] = useState<TravelMode>\("walk"\)/);
   assert.match(homePage, /className="visit__mode-switch"/);
   assert.match(homePage, /role="group"/);
   assert.match(homePage, /aria-pressed=\{travelMode === mode\}/);
-  assert.match(homePage, /className=\{`visit__nearby-metric/);
+  assert.match(homePage, /<TravelModeIcon mode=\{mode\} \/>/);
+  assert.match(homePage, /className="visit__mode-label">\{content\.visitTravelModes\[mode\]\}<\/span>/);
+  assert.match(homePage, /from "lucide-react"/);
+  assert.match(homePage, /PersonStanding/);
+  assert.match(homePage, /Bike/);
+  assert.match(homePage, /CarFront/);
+  assert.match(packageJson, /"lucide-react"/);
   assert.match(content, /visitTravelModeLabel:\s*"Como você vem\?"/);
   assert.match(content, /visitTravelModes:\s*\{\s*walk:\s*"A pé",\s*bike:\s*"Bicicleta",\s*car:\s*"Carro"\s*\}/s);
   for (const value of ["600 m", "950 m", "1,2 km", "1,3 km", "1.2 km", "1.3 km"]) {
     assert.match(content, new RegExp(value.replace(".", "\\.")));
   }
   assert.match(styles, /\.visit__mode-button\s*\{/);
-  assert.match(styles, /\.visit__nearby-metric\s*\{[^}]*opacity:\s*0[^}]*transform:\s*translate3d/s);
-  assert.match(styles, /\.visit__nearby-metric\.is-active\s*\{[^}]*opacity:\s*1[^}]*transform:\s*translate3d\(0,\s*0,\s*0\)/s);
+  assert.match(styles, /\.visit__mode-label\s*\{/);
+  assert.match(homePage, /function TravelMetricRoll/);
+  assert.match(homePage, /TRAVEL_MODES\.indexOf\(mode\)/);
+  assert.match(homePage, /gsap\.to\(timeTrack/);
+  assert.match(homePage, /const targetYPercent = -\(activeIndex \* \(100 \/ TRAVEL_MODES\.length\)\)/);
+  assert.match(homePage, /gsap\.to\(timeTrack, \{[\s\S]*?yPercent:\s*targetYPercent/);
+  const timeTrack = homePage.match(/className="visit__nearby-time-track">([\s\S]*?)<\/span>\s*<\/span>/)?.[1] ?? "";
+  assert.match(timeTrack, /routes\[travelMode\]\.time/);
+  assert.match(homePage, /const distanceChanged = previousDistance\.current !== metric\.distance/);
+  assert.match(homePage, /distanceChanged[\s\S]*?gsap\.to\(distanceTrack/);
+  assert.match(homePage, /gsap\.set\(distanceTrack, \{ yPercent: targetYPercent \}\)/);
+  assert.match(homePage, /visit__nearby-distance-track[\s\S]*?routes\[travelMode\]\.distance/);
+  assert.doesNotMatch(timeTrack, /routes\[travelMode\]\.distance/);
+  assert.match(homePage, /prefers-reduced-motion:\s*reduce/);
+  assert.match(styles, /\.visit__nearby-time-window\s*\{[^}]*overflow:\s*hidden/s);
+  assert.match(styles, /\.visit__nearby-time-track\s*\{[^}]*will-change:\s*transform/s);
+  assert.match(styles, /\.visit__nearby-distance-window\s*\{[^}]*overflow:\s*hidden/s);
 });
 
 test("keeps the enriched location panel responsive", async () => {

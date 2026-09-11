@@ -43,15 +43,24 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   );
   assert.match(
     styles,
-    /@media \(max-width:\s*1080px\)[\s\S]*?\.main-navigation\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*clip-path:\s*inset\(0 0 100% 0\)[^}]*clip-path\s+500ms\s+var\(--ease-in-out\)/s,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.main-navigation\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*transform:\s*translate3d\(0,\s*calc\(-100% - 1px\),\s*0\)[^}]*transition:\s*transform\s+680ms\s+var\(--ease-in-out\),\s*visibility\s+0s\s+linear\s+680ms[^}]*will-change:\s*transform/s,
   );
   assert.match(
     styles,
-    /\.main-navigation\.is-open\s*\{[^}]*clip-path:\s*inset\(0 0 var\(--menu-drag-clip,\s*0px\) 0\)/s,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.menu-toggle\s*\{[^}]*min-height:\s*49px[^}]*padding-inline:\s*8px/s,
   );
-  assert.match(header, /setProperty\("--menu-drag-clip",\s*`\$\{-offset\}px`\)/);
+  assert.match(
+    styles,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.main-navigation a\s*\{[^}]*display:\s*flex[^}]*align-items:\s*center[^}]*min-height:\s*48px/s,
+  );
+  assert.match(
+    styles,
+    /\.main-navigation\.is-open\s*\{[^}]*transform:\s*translate3d\(0,\s*var\(--menu-drag-y,\s*0px\),\s*0\)/s,
+  );
+  assert.match(header, /setProperty\("--menu-drag-y",\s*`\$\{offset\}px`\)/);
   assert.doesNotMatch(header, /event\.pointerType\s*===\s*"mouse"/);
-  assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*translate3d\(0,\s*-100%/s);
+  assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*opacity:/s);
+  assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*clip-path:/s);
   assert.match(styles, /\.mobile-menu-backdrop\s*\{[^}]*opacity\s+500ms\s+var\(--ease-out\)[^}]*visibility\s+0s\s+linear\s+500ms/s);
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
   assert.match(header, /document\.documentElement\.classList\.add\("is-scroll-locked"\)/);
