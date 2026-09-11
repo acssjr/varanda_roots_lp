@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
@@ -13,6 +13,62 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const GOOGLE_MAPS_ROUTE = "https://www.google.com/maps/dir/?api=1&destination=Rua+Deputado+Cunha+Bueno+55%2C+Rio+Vermelho%2C+Salvador%2C+BA";
 const WAZE_ROUTE = "https://ul.waze.com/ul?place=ChIJ52z4fWsDFgcRf1jeybK-zmM&ll=-13.01066800%2C-38.48298000&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location";
+
+function HeroImage({ desktop, mobile, alt, eager }: { desktop: string; mobile: string; alt: string; eager: boolean }) {
+  const common = { alt, quality: 88 } as const;
+  const loading = eager
+    ? { loading: "eager" as const, fetchPriority: "high" as const }
+    : { loading: "lazy" as const };
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({ ...common, ...loading, src: desktop, width: 1672, height: 941, sizes: "100vw" });
+  const {
+    props: { srcSet: mobileSrcSet, ...mobileProps },
+  } = getImageProps({ ...common, ...loading, src: mobile, width: 1122, height: 1402, sizes: "118vw" });
+
+  return (
+    <picture className="hero__picture">
+      <source media="(min-width: 761px)" srcSet={desktopSrcSet} sizes="100vw" />
+      <img
+        {...mobileProps}
+        alt={alt}
+        srcSet={mobileSrcSet}
+        className="hero__image"
+      />
+    </picture>
+  );
+}
+
+function ClassCardImage({ src }: { src: string }) {
+  const container = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const element = container.current;
+    if (!element || visible) return;
+    if (typeof IntersectionObserver === "undefined") {
+      const fallbackId = window.setTimeout(() => setVisible(true), 0);
+      return () => window.clearTimeout(fallbackId);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setVisible(true);
+        observer.disconnect();
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [visible]);
+
+  return (
+    <div className="class-card__image" ref={container}>
+      {visible && <Image src={src} alt="" fill quality={82} sizes="(max-width: 760px) calc(100vw - 36px), 33vw" />}
+    </div>
+  );
+}
 
 function RouteServiceIcon({ service }: { service: "maps" | "waze" }) {
   if (service === "maps") {
@@ -67,6 +123,31 @@ export function HomePage({ locale }: { locale: Locale }) {
   const mainRef = useRef<HTMLElement>(null);
   const slidesRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [loadedSlides, setLoadedSlides] = useState(() => new Set([0]));
+
+  const loadSlide = (index: number) => {
+    setLoadedSlides((current) => {
+      if (current.has(index)) return current;
+      const next = new Set(current);
+      next.add(index);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const nextSlide = (activeSlide + 1) % content.slides.length;
+    const loadNext = () => loadSlide(nextSlide);
+    let idleId: number | undefined;
+    const delayId = window.setTimeout(() => {
+      idleId = window.requestIdleCallback?.(loadNext, { timeout: 2000 });
+      if (idleId === undefined) loadNext();
+    }, 4000);
+
+    return () => {
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+      window.clearTimeout(delayId);
+    };
+  }, [activeSlide, content.slides.length]);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -245,8 +326,9 @@ export function HomePage({ locale }: { locale: Locale }) {
         <div className="hero__slides" ref={slidesRef}>
           {content.slides.map((slide, index) => (
             <div className="hero__slide" key={slide.title} aria-hidden={index !== activeSlide}>
-              <Image className="hero__desktop-image" src={slide.image} alt={slide.imageAlt} fill priority={index === 0} quality={88} sizes="100vw" />
-              <Image className="hero__mobile-image" src={slide.mobileImage} alt="" fill priority={index === 0} quality={88} sizes="100vw" />
+              {loadedSlides.has(index) && (
+                <HeroImage desktop={slide.image} mobile={slide.mobileImage} alt={slide.imageAlt} eager={index === 0} />
+              )}
             </div>
           ))}
         </div>
@@ -265,7 +347,16 @@ export function HomePage({ locale }: { locale: Locale }) {
             <span className="hero__counter">0{activeSlide + 1} / 0{content.slides.length}</span>
             <div className="hero__dots">
               {content.slides.map((slide, index) => (
-                <button key={slide.title} type="button" className={index === activeSlide ? "is-active" : ""} onClick={() => setActiveSlide(index)} aria-label={`${locale === "pt" ? "Mostrar" : "Show"} ${slide.kicker}`}>
+                <button
+                  key={slide.title}
+                  type="button"
+                  className={index === activeSlide ? "is-active" : ""}
+                  onPointerEnter={() => loadSlide(index)}
+                  onPointerDown={() => loadSlide(index)}
+                  onFocus={() => loadSlide(index)}
+                  onClick={() => setActiveSlide(index)}
+                  aria-label={`${locale === "pt" ? "Mostrar" : "Show"} ${slide.kicker}`}
+                >
                   <i />
                 </button>
               ))}
@@ -295,9 +386,7 @@ export function HomePage({ locale }: { locale: Locale }) {
           <div className="class-grid">
             {content.classCards.map(([title, body], index) => (
               <article className="class-card" key={title} data-reveal>
-                <div className="class-card__image">
-                  <Image src={content.classImages[index]} alt="" fill quality={82} sizes="(max-width: 760px) calc(100vw - 36px), 33vw" />
-                </div>
+                <ClassCardImage src={content.classImages[index]} />
                 <div className="class-card__body">
                   <span>0{index + 1}</span><h3>{title}</h3>
                   <div className="class-card__footer"><p>{body}</p></div>
@@ -349,7 +438,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         <div className="page-shell duo__grid">
           <span className="eyebrow eyebrow--yellow duo__mobile-kicker" data-reveal>{content.duoKicker}</span>
           <div className="duo__image-wrap">
-            <Image src="/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp" alt="" fill sizes="(max-width: 800px) calc(100vw - 32px), 50vw" />
+            <Image src="/images/instagram/optimized/photos/pia-pc-casacos-varanda-roots-DYkNlnOjRZq.webp" alt="" fill quality={88} sizes="(max-width: 800px) calc(100vw - 32px), 50vw" />
           </div>
           <div className="section-heading duo__copy">
             <span className="eyebrow eyebrow--yellow" data-reveal>{content.duoKicker}</span>

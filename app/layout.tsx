@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageScrollFade } from "@/components/PageScrollFade";
+import { PageTransition } from "@/components/PageTransition";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         {children}
         <PageScrollFade />
+        <PageTransition />
       </body>
     </html>
   );

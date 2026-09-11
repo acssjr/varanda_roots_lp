@@ -70,6 +70,15 @@ test("keeps the mobile brand and menu toggle on the same stable center line", as
   assert.match(styles, /\.menu-toggle:focus-visible\s*\{[^}]*outline:\s*none[^}]*box-shadow:\s*none/s);
 });
 
+test("keeps the tablet header spacer flush with the fixed header", async () => {
+  const styles = await readFile(stylesPath, "utf8");
+
+  assert.match(
+    styles,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.site-header-spacer\s*\{[^}]*height:\s*136px[\s\S]*?\.site-header__main\s*\{[^}]*min-height:\s*92px/s,
+  );
+});
+
 test("makes the brand return home or scroll the current home page to the top", async () => {
   const header = await readFile(headerPath, "utf8");
 
@@ -81,6 +90,6 @@ test("protects mobile hero copy with a strong lower-half shade", async () => {
   const styles = await readFile(stylesPath, "utf8");
 
   assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.hero__shade\s*\{[^}]*rgba\(5,6,9,\.72\)\s*39%[^}]*rgba\(5,6,9,\.94\)\s*57%/s);
-  assert.match(styles, /\.hero__slide:nth-child\(1\) \.hero__mobile-image\s*\{[^}]*translateY\(-8%\)[^}]*scale\(1\.18\)/s);
+  assert.match(styles, /\.hero__slide:nth-child\(1\) \.hero__image\s*\{[^}]*translateY\(-8%\)[^}]*scale\(1\.18\)/s);
   assert.match(styles, /\.hero__copy::before\s*\{[^}]*rgba\(3,4,8,\.86\)[^}]*blur\(14px\)/s);
 });

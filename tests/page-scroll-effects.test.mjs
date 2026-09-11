@@ -26,13 +26,16 @@ test("adds restrained Lenis wheel smoothing while preserving reduced motion", as
   ]);
 
   assert.match(layout, /import "lenis\/dist\/lenis\.css"/);
+  assert.doesNotMatch(effect, /^import Lenis from "lenis";/m);
+  assert.match(effect, /await import\("lenis"\)/);
+  assert.match(effect, /requestIdleCallback/);
   assert.match(effect, /duration:\s*1\.15/);
   assert.match(effect, /wheelMultiplier:\s*0\.82/);
   assert.match(effect, /smoothWheel:\s*!reducedMotion\.matches/);
   assert.match(effect, /syncTouch:\s*false/);
 });
 
-test("uses a transient overlay thumb without reserving mobile width", async () => {
+test("uses a transient overlay thumb without reserving page width", async () => {
   const [effect, styles] = await Promise.all([
     readFile(effectPath, "utf8"),
     readFile(stylesPath, "utf8"),
@@ -40,8 +43,11 @@ test("uses a transient overlay thumb without reserving mobile width", async () =
 
   assert.match(effect, /classList\.add\("is-scrolling"\)/);
   assert.match(effect, /classList\.remove\("is-scrolling"\), 720/);
-  assert.match(styles, /html, body\s*\{[^}]*scrollbar-width:\s*none/s);
+  assert.match(styles, /html\s*\{[^}]*scrollbar-width:\s*none[^}]*scrollbar-gutter:\s*auto/s);
   assert.match(styles, /html::\-webkit-scrollbar,[\s\S]*?body::\-webkit-scrollbar\s*\{[^}]*width:\s*0/s);
-  assert.match(styles, /\.page-scroll-fade__mobile-thumb\s*\{[^}]*position:\s*absolute[^}]*right:\s*3px[^}]*opacity:\s*0/s);
-  assert.match(styles, /\.page-scroll-fade\.is-scrolling \.page-scroll-fade__mobile-thumb\s*\{[^}]*opacity:\s*\.9/s);
+  assert.match(effect, /--scroll-thumb-height/);
+  assert.match(effect, /page-scroll-fade__scroll-thumb/);
+  assert.match(styles, /\.page-scroll-fade__scroll-thumb\s*\{[^}]*position:\s*absolute[^}]*right:\s*4px[^}]*opacity:\s*0/s);
+  assert.match(styles, /\.page-scroll-fade\.is-scrolling \.page-scroll-fade__scroll-thumb\s*\{[^}]*opacity:\s*\.88/s);
+  assert.match(styles, /@media \(max-width:\s*760px\)[\s\S]*?\.page-scroll-fade__scroll-thumb\s*\{[^}]*right:\s*3px[^}]*width:\s*3px/s);
 });

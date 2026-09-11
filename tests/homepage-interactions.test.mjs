@@ -13,6 +13,19 @@ test("keeps the first hero slide on screen for the initial carousel cycle", asyn
   assert.match(home, /window\.setTimeout\(advance/);
 });
 
+test("serves one art-directed hero image and defers inactive slides", async () => {
+  const home = await readFile(homePath, "utf8");
+
+  assert.match(home, /getImageProps/);
+  assert.match(home, /<source media="\(min-width: 761px\)"/);
+  assert.match(home, /loadedSlides\.has\(index\)/);
+  assert.match(home, /requestIdleCallback/);
+  assert.match(home, /IntersectionObserver/);
+  assert.match(home, /rootMargin:\s*"600px 0px"/);
+  assert.match(home, /fetchPriority:\s*"high"/);
+  assert.doesNotMatch(home, /hero__desktop-image/);
+});
+
 test("reveals the manifest phrase progressively with scroll", async () => {
   const [home, styles] = await Promise.all([
     readFile(homePath, "utf8"),

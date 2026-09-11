@@ -87,8 +87,8 @@ const pt = {
     eyebrow: "Curso online de Forró Roots",
     title: "O estudo continua onde você estiver.",
     intro: "Um percurso com Pía e PC para quem já possui alguma base de forró e quer organizar o estudo do Roots com mais clareza.",
-    heroImage: "/images/instagram/optimized/generated/hero/turma-editorial.webp",
-    heroAlt: "Turma da Varanda Roots reunida em uma aula de forró.",
+    heroImage: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_9.webp",
+    heroAlt: "Comunidade da Varanda Roots reunida depois de uma atividade de forró.",
     primaryAction: { label: "Conhecer o curso completo", href: "https://go.hotmart.com/L106426800T", external: true },
     secondaryAction: { label: "Tirar uma dúvida", href: whatsapp("Olá! Tenho uma dúvida sobre o curso online de Forró Roots: "), external: true },
     highlights: [
@@ -98,9 +98,9 @@ const pt = {
     ],
     story: { eyebrow: "O que você vai estudar", title: "Roots com estrutura, prática e repertório.", body: "O curso online organiza fundamentos, movimentos, conexões e possibilidades do Forró Roots em aulas que você pode rever e praticar no seu ritmo, onde estiver." },
     gallery: [
-      { src: "/images/instagram/optimized/google/google-varanda-01.webp", alt: "Pía conduzindo uma turma em uma aula presencial.", caption: "Fundamentos em movimento" },
-      { src: "/images/instagram/optimized/google/google-varanda-03.webp", alt: "Turma reunida depois de uma experiência de aprendizagem.", caption: "Aprendizado em comunidade" },
-      { src: "/images/instagram/optimized/google/google-varanda-04.webp", alt: "Grande turma reunida no salão da Varanda Roots.", caption: "Prática, troca e repertório" },
+      { src: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_3.webp", alt: "Participantes praticando forró durante uma aula da Varanda Roots.", caption: "Fundamentos em movimento" },
+      { src: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_5.webp", alt: "Pía e PC conduzindo uma roda de participantes durante uma aula.", caption: "Aprendizado em comunidade" },
+      { src: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_4.webp", alt: "Casal dançando diante de uma roda de participantes.", caption: "Prática, troca e repertório" },
     ],
     closingTitle: "Quer entender se o curso é para você?",
     closingBody: "Veja a apresentação completa, o conteúdo e as condições na página do curso. Se ainda houver dúvida sobre o nível indicado, fale com a Varanda.",

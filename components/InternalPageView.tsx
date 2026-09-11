@@ -145,13 +145,20 @@ function RichInternalPageView({ locale, page }: { locale: Locale; page: RichInte
           </div>
           {page.heroImage ? (
             <div className="rich-hero__visual">
-              <Image src={page.heroImage} alt={page.heroAlt ?? ""} fill priority sizes="(max-width: 800px) calc(100vw - 32px), 48vw" />
+              <Image
+                src={page.heroImage}
+                alt={page.heroAlt ?? ""}
+                fill
+                priority
+                quality={88}
+                sizes="(max-width: 760px) calc(100vw - 36px), (max-width: 900px) calc(100vw - 48px), 48vw"
+              />
             </div>
           ) : (
             <div className="rich-hero__signal" aria-hidden="true">
               {contactSignals.map((signal) => (
                 <div className="contact-signal__item" key={signal.label}>
-                  <Image src={signal.image} alt="" fill quality={82} sizes="(max-width: 760px) calc(100vw - 36px), 44vw" />
+                  <Image src={signal.image} alt="" fill quality={88} sizes="(max-width: 760px) calc(100vw - 36px), (max-width: 900px) calc(100vw - 48px), 44vw" />
                   <span>{signal.label}</span>
                 </div>
               ))}
@@ -165,7 +172,7 @@ function RichInternalPageView({ locale, page }: { locale: Locale; page: RichInte
           <div className="page-shell rich-highlights__grid" data-rich-stagger>
             {page.highlights.map((item) => (
               <article key={item.title} id={item.id}>
-                {item.image && <Image src={item.image} alt={item.alt ?? ""} fill quality={82} sizes="(max-width: 760px) calc(100vw - 32px), 33vw" />}
+                {item.image && <Image src={item.image} alt={item.alt ?? ""} fill quality={88} sizes="(max-width: 760px) calc(100vw - 32px), 33vw" />}
                 <div className="rich-highlight__copy"><h2>{item.title}</h2><p>{item.body}</p></div>
               </article>
             ))}
@@ -201,7 +208,15 @@ function RichInternalPageView({ locale, page }: { locale: Locale; page: RichInte
           <div className="page-shell rich-gallery__grid scroll-fade-x" data-rich-stagger>
             {page.gallery.map((item, index) => (
               <figure key={item.src} className={`rich-gallery__item rich-gallery__item--${index + 1}`}>
-                <Image src={item.src} alt={item.alt} fill sizes="(max-width: 760px) calc(100vw - 44px), 40vw" />
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  quality={88}
+                  sizes={index === 0
+                    ? "(max-width: 760px) calc(100vw - 44px), (max-width: 1600px) 58vw, 880px"
+                    : "(max-width: 760px) calc(100vw - 44px), (max-width: 1600px) 40vw, 610px"}
+                />
                 <figcaption>{item.caption}</figcaption>
               </figure>
             ))}
