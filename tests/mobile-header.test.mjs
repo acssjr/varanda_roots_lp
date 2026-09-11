@@ -16,9 +16,35 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   assert.match(header, /onPointerDown=\{handleMenuPointerDown\}/);
   assert.match(header, /onPointerMove=\{handleMenuPointerMove\}/);
   assert.match(header, /onPointerUp=\{handleMenuPointerEnd\}/);
+  assert.match(header, /ref=\{navigationRef\}/);
+  assert.match(
+    header,
+    /className="mobile-menu-backdrop"[\s\S]*?onPointerDown=\{handleMenuPointerDown\}[\s\S]*?onPointerMove=\{handleMenuPointerMove\}[\s\S]*?onPointerUp=\{handleMenuPointerEnd\}[\s\S]*?onPointerCancel=\{handleMenuPointerCancel\}/,
+  );
   assert.match(styles, /\.mobile-menu-backdrop\s*\{/);
   assert.match(styles, /\.main-navigation\s*\{[^}]*overflow:\s*hidden/s);
+  assert.match(styles, /\.site-header\s*\{[^}]*--mobile-header-edge:\s*148px/s);
+  assert.match(
+    styles,
+    /@media \(max-width:\s*1080px\)[\s\S]*?\.site-header\s*\{[^}]*--mobile-header-edge:\s*136px[\s\S]*?\.site-header--compact\s*\{[^}]*--mobile-header-edge:\s*75px/s,
+  );
+  assert.match(
+    styles,
+    /@media \(max-width:\s*760px\)[\s\S]*?\.site-header\s*\{[^}]*--mobile-header-edge:\s*88px[\s\S]*?\.site-header--compact\s*\{[^}]*--mobile-header-edge:\s*72px/s,
+  );
+  assert.match(styles, /\.main-navigation\s*\{[^}]*top:\s*var\(--mobile-header-edge\)/s);
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
+});
+
+test("defines a subtle boundary only for light page headers", async () => {
+  const styles = await readFile(stylesPath, "utf8");
+
+  assert.match(styles, /\.site-header::after\s*\{[^}]*width:\s*var\(--shell\)[^}]*opacity:\s*0/s);
+  assert.match(
+    styles,
+    /body:has\(\.rich-page--light\) \.site-header:not\(\.site-header--compact\):not\(\.site-header--menu-open\)::after\s*\{[^}]*opacity:/s,
+  );
+  assert.match(styles, /\.site-header--compact::after[\s\S]*?opacity:\s*0/s);
 });
 
 test("reconstructs the wordmark from left to right on desktop and mobile without moving the brand", async () => {

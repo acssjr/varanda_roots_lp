@@ -38,6 +38,28 @@ test("shows the neighborhood and three researched walking references", async () 
   assert.match(content, /18 min a pé/);
 });
 
+test("switches between fixed walking, cycling and driving references", async () => {
+  const [homePage, content, styles] = await Promise.all([
+    readFile(homePagePath, "utf8"),
+    readFile(contentPath, "utf8"),
+    readFile(stylesPath, "utf8"),
+  ]);
+
+  assert.match(homePage, /const \[travelMode, setTravelMode\] = useState<TravelMode>\("walk"\)/);
+  assert.match(homePage, /className="visit__mode-switch"/);
+  assert.match(homePage, /role="group"/);
+  assert.match(homePage, /aria-pressed=\{travelMode === mode\}/);
+  assert.match(homePage, /className=\{`visit__nearby-metric/);
+  assert.match(content, /visitTravelModeLabel:\s*"Como você vem\?"/);
+  assert.match(content, /visitTravelModes:\s*\{\s*walk:\s*"A pé",\s*bike:\s*"Bicicleta",\s*car:\s*"Carro"\s*\}/s);
+  for (const value of ["600 m", "950 m", "1,2 km", "1,3 km", "1.2 km", "1.3 km"]) {
+    assert.match(content, new RegExp(value.replace(".", "\\.")));
+  }
+  assert.match(styles, /\.visit__mode-button\s*\{/);
+  assert.match(styles, /\.visit__nearby-metric\s*\{[^}]*opacity:\s*0[^}]*transform:\s*translate3d/s);
+  assert.match(styles, /\.visit__nearby-metric\.is-active\s*\{[^}]*opacity:\s*1[^}]*transform:\s*translate3d\(0,\s*0,\s*0\)/s);
+});
+
 test("keeps the enriched location panel responsive", async () => {
   const styles = await readFile(stylesPath, "utf8");
 
