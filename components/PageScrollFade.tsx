@@ -16,8 +16,18 @@ export function PageScrollFade() {
     let idleTimer = 0;
     let idleCallback = 0;
     let disposed = false;
-    let lenis: { destroy: () => void } | undefined;
+    let lenis: { destroy: () => void; start: () => void; stop: () => void } | undefined;
+    let pageScrollLocked = document.documentElement.classList.contains("is-scroll-locked");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const handleScrollLock = (event: Event) => {
+      pageScrollLocked = (event as CustomEvent<{ locked: boolean }>).detail.locked;
+      if (pageScrollLocked) {
+        lenis?.stop();
+      } else {
+        lenis?.start();
+      }
+    };
 
     const initializeSmoothScroll = async () => {
       const { default: Lenis } = await import("lenis");
@@ -31,7 +41,10 @@ export function PageScrollFade() {
         syncTouch: false,
         wheelMultiplier: 0.82,
       });
+      if (pageScrollLocked) lenis.stop();
     };
+
+    window.addEventListener("varanda:scroll-lock", handleScrollLock);
 
     if (window.requestIdleCallback) {
       idleCallback = window.requestIdleCallback(() => void initializeSmoothScroll(), { timeout: 1200 });
@@ -71,6 +84,7 @@ export function PageScrollFade() {
     return () => {
       disposed = true;
       lenis?.destroy();
+      window.removeEventListener("varanda:scroll-lock", handleScrollLock);
       window.removeEventListener("scroll", showScrollThumb);
       window.removeEventListener("resize", scheduleUpdate);
       if (idleCallback) window.cancelIdleCallback?.(idleCallback);

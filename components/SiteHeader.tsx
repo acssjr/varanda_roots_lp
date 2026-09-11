@@ -67,16 +67,23 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   useEffect(() => {
     if (!open) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("is-scroll-locked");
+    window.dispatchEvent(new CustomEvent("varanda:scroll-lock", { detail: { locked: true } }));
+
+    const preventViewportScroll = (event: Event) => event.preventDefault();
 
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
 
+    window.addEventListener("wheel", preventViewportScroll, { passive: false });
+    window.addEventListener("touchmove", preventViewportScroll, { passive: false });
     window.addEventListener("keydown", closeOnEscape);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.classList.remove("is-scroll-locked");
+      window.dispatchEvent(new CustomEvent("varanda:scroll-lock", { detail: { locked: false } }));
+      window.removeEventListener("wheel", preventViewportScroll);
+      window.removeEventListener("touchmove", preventViewportScroll);
       window.removeEventListener("keydown", closeOnEscape);
     };
   }, [open]);

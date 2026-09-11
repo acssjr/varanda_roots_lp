@@ -35,6 +35,15 @@ test("adds restrained Lenis wheel smoothing while preserving reduced motion", as
   assert.match(effect, /syncTouch:\s*false/);
 });
 
+test("stops smooth scrolling while the mobile menu owns the viewport", async () => {
+  const effect = await readFile(effectPath, "utf8");
+
+  assert.match(effect, /window\.addEventListener\("varanda:scroll-lock",\s*handleScrollLock\)/);
+  assert.match(effect, /window\.removeEventListener\("varanda:scroll-lock",\s*handleScrollLock\)/);
+  assert.match(effect, /if \(pageScrollLocked\)\s*\{\s*lenis\?\.stop\(\);\s*\}\s*else\s*\{\s*lenis\?\.start\(\);/s);
+  assert.match(effect, /if \(pageScrollLocked\) lenis\.stop\(\)/);
+});
+
 test("uses a transient overlay thumb without reserving page width", async () => {
   const [effect, styles] = await Promise.all([
     readFile(effectPath, "utf8"),

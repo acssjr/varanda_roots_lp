@@ -54,6 +54,16 @@ test("turns the mobile menu into a dismissible non-scrolling sheet", async () =>
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*translate3d\(0,\s*-100%/s);
   assert.match(styles, /\.mobile-menu-backdrop\s*\{[^}]*opacity\s+500ms\s+var\(--ease-out\)[^}]*visibility\s+0s\s+linear\s+500ms/s);
   assert.doesNotMatch(styles, /\.main-navigation\s*\{[^}]*min-height:\s*100svh/s);
+  assert.match(header, /document\.documentElement\.classList\.add\("is-scroll-locked"\)/);
+  assert.match(header, /document\.documentElement\.classList\.remove\("is-scroll-locked"\)/);
+  assert.match(header, /new CustomEvent\("varanda:scroll-lock",\s*\{\s*detail:\s*\{\s*locked:\s*true\s*\}/s);
+  assert.match(header, /new CustomEvent\("varanda:scroll-lock",\s*\{\s*detail:\s*\{\s*locked:\s*false\s*\}/s);
+  assert.match(header, /const preventViewportScroll = \(event: Event\) => event\.preventDefault\(\)/);
+  assert.match(header, /window\.addEventListener\("wheel",\s*preventViewportScroll,\s*\{\s*passive:\s*false\s*\}\)/);
+  assert.match(header, /window\.addEventListener\("touchmove",\s*preventViewportScroll,\s*\{\s*passive:\s*false\s*\}\)/);
+  assert.match(header, /window\.removeEventListener\("wheel",\s*preventViewportScroll\)/);
+  assert.match(header, /window\.removeEventListener\("touchmove",\s*preventViewportScroll\)/);
+  assert.match(styles, /html\.is-scroll-locked,[\s\S]*?html\.is-scroll-locked body\s*\{[^}]*overflow:\s*hidden[^}]*overscroll-behavior:\s*none/s);
 
   const mobileHeaderStyles = styles.slice(
     styles.indexOf("@media (max-width: 760px)"),
