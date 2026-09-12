@@ -28,6 +28,7 @@ test("adds restrained Lenis wheel smoothing while preserving reduced motion", as
   assert.match(layout, /import "lenis\/dist\/lenis\.css"/);
   assert.doesNotMatch(effect, /^import Lenis from "lenis";/m);
   assert.match(effect, /await import\("lenis"\)/);
+  assert.match(effect, /try\s*\{[\s\S]*?await import\("lenis"\)[\s\S]*?\}\s*catch\s*\{/);
   assert.match(effect, /requestIdleCallback/);
   assert.match(effect, /duration:\s*1\.15/);
   assert.match(effect, /wheelMultiplier:\s*0\.82/);

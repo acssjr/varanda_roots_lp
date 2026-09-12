@@ -30,18 +30,23 @@ export function PageScrollFade() {
     };
 
     const initializeSmoothScroll = async () => {
-      const { default: Lenis } = await import("lenis");
-      if (disposed) return;
-      lenis = new Lenis({
-        anchors: true,
-        autoRaf: true,
-        duration: 1.15,
-        smoothWheel: !reducedMotion.matches,
-        stopInertiaOnNavigate: true,
-        syncTouch: false,
-        wheelMultiplier: 0.82,
-      });
-      if (pageScrollLocked) lenis.stop();
+      try {
+        const { default: Lenis } = await import("lenis");
+        if (disposed) return;
+        lenis = new Lenis({
+          anchors: true,
+          autoRaf: true,
+          duration: 1.15,
+          smoothWheel: !reducedMotion.matches,
+          stopInertiaOnNavigate: true,
+          syncTouch: false,
+          wheelMultiplier: 0.82,
+        });
+        if (pageScrollLocked) lenis.stop();
+      } catch {
+        // A stale tab can reference an expired lazy chunk after a new deploy or dev-server restart.
+        // Native scrolling remains fully functional, so fail quietly instead of breaking the page.
+      }
     };
 
     window.addEventListener("varanda:scroll-lock", handleScrollLock);
