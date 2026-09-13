@@ -491,7 +491,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <h1>{active.title}</h1>
             <p>{active.text}</p>
             <Link className="round-link round-link--yellow action-link" href={`/${locale}${active.href}`}>
-              <span>{content.discover}</span><ActionArrow />
+              <span>{active.actionLabel}</span><ActionArrow />
             </Link>
           </div>
           <div className="hero__controls" aria-label={locale === "pt" ? "Selecionar imagem" : "Select image"}>

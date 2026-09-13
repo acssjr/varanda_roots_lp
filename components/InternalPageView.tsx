@@ -183,7 +183,7 @@ function RichInternalPageView({ locale, page }: { locale: Locale; page: RichInte
       {page.profiles && profile && (
         <section className="rich-profiles" id="perfis">
           <div className="page-shell">
-            <div className="rich-section-heading" data-rich-reveal><span>{locale === "pt" ? "Conheça os fundadores" : "Meet the founders"}</span><h2>{locale === "pt" ? "Pía e PC, por eles mesmos." : "Meet Pía and PC."}</h2></div>
+            <div className="rich-section-heading" data-rich-reveal><span>{locale === "pt" ? "Conheça os fundadores" : "Meet the founders"}</span><h2>{locale === "pt" ? "Quem ensina na Varanda." : "Your teachers at Varanda."}</h2></div>
             <div className="rich-profiles__choices" data-rich-stagger>
               {page.profiles.map((item, index) => (
                 <button type="button" className={index === activeProfile ? "is-active" : ""} key={item.name} onClick={() => setActiveProfile(index)} aria-pressed={index === activeProfile}>

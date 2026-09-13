@@ -7,7 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Varanda Roots",
   description:
-    "Escola, festa, comunidade e casa de Forró Roots no Rio Vermelho, em Salvador.",
+    "Aulas de Forró Roots, bailes e workshops com Pía e PC no Rio Vermelho, Salvador.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

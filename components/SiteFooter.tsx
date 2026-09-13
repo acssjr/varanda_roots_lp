@@ -9,7 +9,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       <div className="page-shell site-footer__grid">
         <div className="site-footer__identity">
           <BrandMark compact />
-          <p>{locale === "pt" ? "Escola, festa, comunidade e casa." : "School, party, community and home."}</p>
+          <p>{locale === "pt" ? "Aulas de forró, bailes e workshops em Salvador." : "Forró classes, social dances and workshops in Salvador."}</p>
         </div>
         <div className="site-footer__column">
           <span>{locale === "pt" ? "Explore" : "Explore"}</span>
