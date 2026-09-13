@@ -44,6 +44,7 @@ As páginas usam o segmento inicial `/pt` ou `/en`. Os pares de rotas ficam em [
 | Aulas | `/pt/aulas` | `/en/classes` |
 | Eventos | `/pt/eventos` | `/en/events` |
 | Curso | `/pt/curso` | `/en/course` |
+| Landing Aprenda o Roots | `/pt/aprenda-o-roots` | — |
 | Pía e PC | `/pt/pia-e-pc` | `/en/pia-and-pc` |
 | Contato | `/pt/contato` | `/en/contact` |
 | Privacidade | `/pt/politica-de-privacidade` | `/en/privacy-policy` |
@@ -51,6 +52,8 @@ As páginas usam o segmento inicial `/pt` ou `/en`. Os pares de rotas ficam em [
 | Cookies | `/pt/cookies` | `/en/cookies` |
 
 [`app/[locale]/page.tsx`](app/%5Blocale%5D/page.tsx) renderiza a página inicial. [`app/[locale]/[slug]/page.tsx`](app/%5Blocale%5D/%5Bslug%5D/page.tsx) resolve as páginas internas e gera seus metadados. Uma combinação de idioma ou slug que não existe usa a página 404 da marca.
+
+`/pt/curso` é a apresentação institucional do curso dentro do site da Varanda Roots. Seus CTAs de apresentação levam a `/pt/aprenda-o-roots`, a landing comercial própria do produto, com identidade e estrutura independentes do site institucional.
 
 ## Organização do repositório
 

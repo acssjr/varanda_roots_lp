@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const componentPath = new URL("../components/PageTransition.tsx", import.meta.url);
-const layoutPath = new URL("../app/layout.tsx", import.meta.url);
+const layoutPath = new URL("../app/[locale]/layout.tsx", import.meta.url);
 const stylesPath = new URL("../app/globals.css", import.meta.url);
 
 test("mounts one persistent transition layer around route changes", async () => {

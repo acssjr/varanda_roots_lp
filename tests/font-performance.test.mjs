@@ -5,13 +5,13 @@ import test from "node:test";
 const stylesPath = new URL("../app/globals.css", import.meta.url);
 const homePath = new URL("../components/HomePage.tsx", import.meta.url);
 const configPath = new URL("../next.config.ts", import.meta.url);
-const fontPath = new URL("../public/fonts/SaansCollectionVF-Latin-TRIAL.woff2", import.meta.url);
+const fontPath = new URL("../public/fonts/SaansCollectionVF-Latin.woff2", import.meta.url);
 
 test("serves one compact variable Saans font for proportional and mono typography", async () => {
   const [styles, font] = await Promise.all([readFile(stylesPath, "utf8"), stat(fontPath)]);
   const declaredSources = [...styles.matchAll(/@font-face\{[^}]*src:url\("([^"]+)"\)/g)].map((match) => match[1]);
 
-  assert.deepEqual([...new Set(declaredSources)], ["/fonts/SaansCollectionVF-Latin-TRIAL.woff2"]);
+  assert.deepEqual([...new Set(declaredSources)], ["/fonts/SaansCollectionVF-Latin.woff2"]);
   assert.ok(font.size < 100 * 1024, `expected the initial font to stay below 100 KiB, received ${font.size}`);
   assert.doesNotMatch(styles, /Saans(?:Mono|SemiMono)-TRIAL/);
   assert.match(styles, /\.eyebrow,[^{]*\{\s*font-variation-settings:\s*"MONO" 100/s);

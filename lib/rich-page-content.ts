@@ -89,7 +89,7 @@ const pt = {
     intro: "O curso é para quem já conhece o básico do forró e quer estudar Roots. Você pode rever as aulas e praticar no seu ritmo.",
     heroImage: "/images/instagram/optimized/carousels/Dax6IEonKfx/Dax6IEonKfx_20260714_9.webp",
     heroAlt: "Público aplaudindo durante uma atividade presencial de forró.",
-    primaryAction: { label: "Conhecer o curso completo", href: "https://go.hotmart.com/L106426800T", external: true },
+    primaryAction: { label: "Conhecer o curso completo", href: "/pt/aprenda-o-roots" },
     secondaryAction: { label: "Tirar uma dúvida", href: whatsapp("Olá! Tenho uma dúvida sobre o curso online de Forró Roots: "), external: true },
     highlights: [
       { title: "Para quem já dança", body: "É preciso ter alguma experiência com forró. Se você nunca dançou, fale com a equipe sobre as aulas para iniciantes." },
@@ -104,7 +104,7 @@ const pt = {
     ],
     closingTitle: "Quer entender se o curso é para você?",
     closingBody: "Veja a apresentação completa, o conteúdo e as condições na página do curso. Se ainda houver dúvida sobre o nível indicado, fale com a Varanda.",
-    closingAction: { label: "Ir para a página do curso", href: "https://go.hotmart.com/L106426800T", external: true },
+    closingAction: { label: "Ir para a página do curso", href: "/pt/aprenda-o-roots" },
   },
   "pia-e-pc": {
     kind: "rich",

@@ -1,6 +1,6 @@
-@font-face{font-family:"Saans";src:url("/fonts/SaansCollectionVF-Latin-TRIAL.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF}
-@font-face{font-family:"Saans Mono";src:url("/fonts/SaansCollectionVF-Latin-TRIAL.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF}
-@font-face{font-family:"Saans SemiMono";src:url("/fonts/SaansCollectionVF-Latin-TRIAL.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF}
+@font-face{font-family:"Saans";src:url("/fonts/SaansCollectionVF-Latin.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF}
+@font-face{font-family:"Saans Mono";src:url("/fonts/SaansCollectionVF-Latin.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF}
+@font-face{font-family:"Saans SemiMono";src:url("/fonts/SaansCollectionVF-Latin.woff2") format("woff2");font-weight:300 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF}
 
 :root {
   --yellow: #fff050;

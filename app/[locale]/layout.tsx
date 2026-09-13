@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DocumentLanguage } from "@/components/DocumentLanguage";
+import { PageScrollFade } from "@/components/PageScrollFade";
+import { PageTransition } from "@/components/PageTransition";
 import { isLocale } from "@/lib/site-content";
 
 export function generateStaticParams() {
@@ -21,6 +23,8 @@ export default async function LocaleLayout({
       <SiteHeader locale={locale} />
       {children}
       <SiteFooter locale={locale} />
+      <PageScrollFade />
+      <PageTransition />
     </div>
   );
 }

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "optimize:instagram": "npx --yes --package node@16 node scripts/optimize-instagram-images.mjs",
+    "optimize:course-testimonials": "npx --yes --package node@16 node scripts/optimize-course-testimonials.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
