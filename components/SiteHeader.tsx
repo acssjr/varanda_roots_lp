@@ -108,7 +108,6 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const handleMenuPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     if (!open || dragStartRef.current) return;
     dragStartRef.current = { y: event.clientY, time: performance.now(), pointerId: event.pointerId };
-    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handleMenuPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
@@ -120,6 +119,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     if (offset > -4) return;
 
     event.preventDefault();
+    if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
     navigation.classList.add("is-dragging");
     navigation.style.setProperty("--menu-drag-y", `${offset}px`);
   };
